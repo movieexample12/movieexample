@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <PreferenceCategory 
+        android:title="@string/pref_sms_storage_title"
+        android:key="pref_key_storage_settings">
+        <CheckBoxPreference
+            android:key="pref_key_auto_delete"
+            android:summary="@string/pref_summary_auto_delete"
+            android:title="@string/memory_cb"
+            android:defaultValue="false" />
+        <Preference 
+            android:key="pref_key_sms_delete_limit"
+            android:dependency="pref_key_auto_delete"
+            android:summary="@string/pref_summary_delete_limit"
+            android:title="@string/pref_title_sms_delete"... />
+        <Preference 
+            android:key="pref_key_mms_delete_limit"
+            android:dependency="pref_key_auto_delete"
+            android:summary="@string/pref_summary_delete_limit"
+            android:title="@string/pref_title_mms_delete" ... />
+    </PreferenceCategory>
+    
+    <CheckBoxPreference
+        android:key="pref_sync"
+        android:title="@string/pref_sync"
+        android:summary="@string/pref_sync_summ"
+        android:defaultValue="true" />
+    <ListPreference
+        android:dependency="pref_sync"
+        android:key="pref_syncConnectionType"
+        android:title="@string/pref_syncConnectionType"
+        android:dialogTitle="@string/pref_syncConnectionType"
+        android:entries="@array/pref_syncConnectionTypes_entries"
+        android:entryValues="@array/pref_syncConnectionTypes_values"
+        android:defaultValue="@string/pref_syncConnectionTypes_default" />
+</PreferenceScreen>
+
+<LinearLayout android:id="@+id/preferences"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
+    <TextView
+        android:id="@+id/preferences_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/preferences_title" />
+
+    <CheckBox
+        android:id="@+id/memory_cb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/memory_cb" 
+        android:onClick="cb_memoryChecked"/>
+    
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton 
+        	android:id="@+id/rb_ua"
+        	android:text="@string/rblanguage_ua" 
+        	android:checked="false"
+        	android:onClick="rb_uaLocaleChecked"/>
+        <RadioButton 
+        	android:id="@+id/rb_en"
+        	android:text="@string/rblanguage_en" 
+        	android:checked="true"
+        	android:onClick="rb_enLocaleChecked"/>
+   </RadioGroup>
+   
+   <TextView
+       android:id="@+id/limitOfMovies_label" 
+       android:text="@string/limitOfMovies"
+       android:layout_height="wrap_content" 
+       android:layout_width="match_parent" />
+   
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent">
+   
+   <EditText 
+       android:layout_height="40sp" 
+       android:layout_width="80sp"
+       android:id="@+id/limitOfMovies" 
+	   android:inputType="number"
+	   android:text="" 
+	   />
+   <Button 
+       android:layout_height="40sp" 
+       android:layout_width="160sp"
+       android:id="@+id/limitButton" 
+	   android:text="@string/limit_button" 
+       />
+
+   </LinearLayout>
+</LinearLayout>
+    

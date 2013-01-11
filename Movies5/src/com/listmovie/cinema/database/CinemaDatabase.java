@@ -1,0 +1,67 @@
+package com.listmovie.cinema.database;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
+
+/** 
+ * Describes cinema database
+ * */
+public class CinemaDatabase {
+
+ 	public final static String TABLE_NAME 			   = "tcinemas";
+	public final static String DATABASE_NAME 	       = "dbcinemas";
+	public final static int    DATABASE_VERSION 	   = 2;
+	
+    private final CinemaOpenHelper mDatabaseOpenHelper;
+
+    /**
+     * Constructor
+     * @param context The Context within which to work, used to create the DB
+     */
+    public CinemaDatabase(Context context) {
+        mDatabaseOpenHelper = new CinemaOpenHelper(context);
+    }
+
+    /**
+     * Returns a Cursor positioned at the word specified by rowId
+     *
+     * @param rowId id of word to retrieve
+     * @param columns The columns to include, if null then all are included
+     * @return Cursor positioned to matching word, or null if not found.
+     */
+    public Cursor getCinema(String[] selectionArgs, String[] columns) {
+        String selection = Cinema.COLUMN_NAME_ID_S + " = ?";
+        return query(selection, selectionArgs, columns);
+    }
+    
+
+    /**
+     * Performs a database query.
+     * @param selection The selection clause
+     * @param selectionArgs Selection arguments for "?" components in the selection
+     * @param columns The columns to return
+     * @return A Cursor over all rows matching the query
+     */
+    private Cursor query(String selection, String[] selectionArgs, String[] columns) {
+        /* The SQLiteBuilder provides a map for all possible columns requested to
+         * actual columns in the database, creating a simple column alias mechanism
+         * by which the ContentProvider does not need to know the real column names
+         */
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(TABLE_NAME);
+
+        Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
+                columns, selection, selectionArgs, null, null, null);
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
+    
+
+}

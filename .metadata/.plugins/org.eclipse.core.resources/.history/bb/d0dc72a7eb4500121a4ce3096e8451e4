@@ -1,0 +1,97 @@
+package com.listmovie.movies;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.example.listmovie.R;
+import com.listmovie.utils.MovieConstants;
+
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class LazyAdapter extends BaseAdapter {
+	
+    private Activity activity;
+    private List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    private LayoutInflater inflater;
+    public LazyAdapter(Activity a) {
+    	activity = a;
+    }
+    
+    public void add(List<Map<String, String>> data) {
+		this.data.addAll(data);
+	}
+    
+	@Override
+	public int getCount() {
+		return data.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return data.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View vi, ViewGroup parent) {
+
+		if (vi == null) {
+			if (inflater == null) {
+				inflater = activity.getLayoutInflater();
+			}
+            vi = inflater.inflate(R.layout.activity_list_item, parent, false);
+        }
+	 
+        TextView title = (TextView)vi.findViewById(R.id.title); 
+        TextView duration = (TextView)vi.findViewById(R.id.duration); 
+        ImageView image = (ImageView)vi.findViewById(R.id.image);
+
+        Map<String, String> movie = new HashMap<String, String>();
+        movie = data.get(position);
+ 
+        title.setText(String.valueOf(movie.get(MovieConstants.KEY_TITLE)));
+        duration.setText(String.valueOf(movie.get(MovieConstants.KEY_RELEASE_DATE)));
+		
+        String url = movie.get(MovieConstants.KEY_IMAGE_URL);
+        if (url != null && !url.isEmpty()) {
+        	new AsyncTask<Object, Void, Bitmap> () {
+    			ImageView image;
+    			@Override
+    			protected Bitmap doInBackground(Object... params) {
+    				image = (ImageView)params[0];
+    				try {
+    					URL newurl = new URL(String.valueOf(params[1]));
+    					return BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+    			    } catch (Exception e) {
+    					Log.e(LazyAdapter.class.getSimpleName(), e.getMessage());
+    				} 
+    				return null;
+    			}
+    			protected void onPostExecute(Bitmap result) {
+    				image.setImageBitmap(result);
+    			}
+
+    		}.execute(image, movie.get(MovieConstants.KEY_IMAGE_URL));
+        }
+        return vi;
+	}
+	
+	
+}

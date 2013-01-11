@@ -1,0 +1,10 @@
+package com.listmovie.utils;
+
+public interface IPreferences {
+    
+    public int getDistance();
+    public int limitOfMovies();
+    public String prefLanguage();
+    public boolean useExternalStorage();
+
+}

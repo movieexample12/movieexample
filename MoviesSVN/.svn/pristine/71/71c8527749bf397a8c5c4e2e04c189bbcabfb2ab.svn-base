@@ -1,0 +1,120 @@
+package com.listmovie.movies.activity;
+
+
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.SearchView;
+
+import com.listmovie.R;
+import com.listmovie.movies.MoviesListTask;
+import com.listmovie.utils.MovieConstants;
+import com.listmovie.utils.SharedPreferencesManager;
+
+public class MainActivity extends AbstractListMovieActivity implements OnScrollListener {
+	
+    private int pageNum = 1;
+    private MoviesListTask task ;
+	protected View footer;
+	private boolean limitExtended = false;
+	private SharedPreferencesManager sharedPreferencesManager;
+	
+	private SharedPreferencesManager getSharedPreferencesManager() {
+		if (sharedPreferencesManager == null) {
+			sharedPreferencesManager = new SharedPreferencesManager(this);
+		}
+		return sharedPreferencesManager;
+	}
+    
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initList();
+        loadPage();
+        list.setOnScrollListener(this);
+        getSharedPreferencesManager().setLocale(getSharedPreferencesManager().getPreferences(MovieConstants.KEY_LOCALE, "en"));
+    }
+
+    protected void loadPage() {
+    	synchronized (this) {
+    		if (task == null || task.taskEnded) {
+            	task = new MoviesListTask(this){
+                 	protected void onPostExecute(Boolean result) {
+                 		super.onPostExecute(result);
+                 		onTaskEnd();
+                 		if (!limitOfMoviesExtended() && footer == null) {
+                 			footer = getLayoutInflater().inflate(R.layout.footer, null);
+                            list.addFooterView(footer);
+                 		} else if (limitOfMoviesExtended()) {
+                 			limitExtended = true;
+                 			list.removeFooterView(footer);
+                 		}
+                 	};
+                };
+                task.execute(pageNum);
+                pageNum += 1;
+     		}
+        }
+    }
+    
+    public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
+		if (!limitExtended && (firstVisible + visibleCount >= totalCount)) {
+		    loadPage();
+		}
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu, menu);
+	    SearchView searchView =
+	             (SearchView) menu.findItem(R.id.search_menu).getActionView();
+	    final Context c = this;
+	    final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+		    @Override
+		    public boolean onQueryTextChange(String newText) {
+		        return true;
+		    }
+
+		    @Override
+		    public boolean onQueryTextSubmit(String query) {
+		        Intent searchActivity = new Intent(c, SearchActivity.class);
+		        searchActivity.putExtra(SearchManager.QUERY, query);
+		        searchActivity.setAction(Intent.ACTION_SEARCH);
+		        c.startActivity(searchActivity);
+		        return true;
+		    }
+		};
+	    if (searchView != null) {
+	    	searchView.setOnQueryTextListener(queryTextListener);
+	    }
+	    
+	    return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.preferences_menu:
+	        	Intent searchActivity = new Intent(this, PreferencesActivity.class);
+		        this.startActivity(searchActivity);
+	            return true;
+	        default:
+	            return false;
+	    }
+	}
+	
+}

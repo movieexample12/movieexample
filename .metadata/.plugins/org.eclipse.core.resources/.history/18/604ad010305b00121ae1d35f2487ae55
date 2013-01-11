@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title">Назва</string>
+    <string name="duration">Час</string>
+    <string name="app_name">Стрiчки</string>
+    <string name="error_loading_items">Помилка виникла при загрузцi</string>
+    <string name="loading">Загрузка&#8230;</string>
+    <string name="release_date">Дата релiзу</string>
+    <string name="actors">Актори</string>
+	<string name="description">Iнформацiя</string>
+    <string name="search_hint">Пошук&#8230;</string>
+    <string name="app_label">Movies</string>
+    <string name="search_title">Пошук</string>
+    <string name="memory_cb">Натиснить якщо бажаете зберегти на картку пам\'яти(зберiгаеться у внутр. пам\'ять за замовченням)</string>
+    <string name="preferences_title">Установки</string>
+    <string name="rblanguage_en">EN</string>
+    <string name="rblanguage_ua">UA</string>
+    <string name="limitOfMovies">Максимальна кiлькiсть загружених стрiчок.</string>
+    <string name="limit_button">Встановити лiмiт</string>
+    <string name="ok">ок</string>
+    <string name="title_dialog">Лимит повинен бути lt;5 та &gt;20! Вiн буде встановлений у 5. </string>
+    <string name="external_device_does_not_work">З ексернал девайсом виникли трабли. Файли зберiгаються на iнтернал. </string>
+    <string name="trailer_label">Трейлер</string>
+    <string name="no_trailer_label">Немае трейлеру.</string>
+    <string name="cinema_details">Загальна iнформацiя</string>
+    <string name="tickets">Бiлети</string>
+    <string name="display_options_menu_item">Налаштування</string>
+    <string name="display_options_custom_button">Налаштування розширени</string>
+    <string name="getting_movie_">Отримання iнформацii про  </string>
+    <string name="release_date_title">Дата релiза</string>
+    <string name="rating">Рейтинг</string>
+    <string name="theaters">Кiно(та iн)</string>
+    <string name="distance_gps">Радiус(для GPS, м.)</string>
+    <string name="limit_movies_wrong_message">Значення повинно буи позитивним числом вiд 5 до 20</string>    
+</resources>

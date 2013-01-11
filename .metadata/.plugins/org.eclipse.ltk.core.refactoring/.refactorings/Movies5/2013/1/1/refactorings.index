@@ -1,0 +1,42 @@
+1357203324830	Delete element
+1357204044266	Copy files
+1357205924200	Delete elements
+1357205933666	Delete elements
+1357206552747	Delete elements
+1357206561388	Delete elements
+1357217276822	Delete element
+1357219655205	Rename type 'NotePadProvider'
+1357225012768	Rename field 'PATH_NOTES'
+1357225029409	Rename field 'PATH_NOTE_ID'
+1357225096388	Rename field 'NOTE_ID_PATH_POSITION'
+1357289277121	Delete element
+1357289572189	Rename type 'PlacesList'
+1357289625103	Copy compilation unit
+1357289656559	Copy compilation unit
+1357289977796	Move compilation units
+1357289990976	Rename type 'OpeningHoursPeriods'
+1357290012209	Rename type 'Periods'
+1357290133086	Copy compilation unit
+1357291077011	Rename type 'DictionaryProvider'
+1357293039255	Rename field 'WORDS_MIME_TYPE'
+1357293069959	Rename method 'getWord'
+1357293135911	Rename package 'com.listmovie.database'
+1357311089793	Rename field 'list'
+1357376640740	Move compilation unit
+1357377632024	Copy file
+1357377919969	Delete element
+1357381023866	Rename package 'com.listmovie.overlay'
+1357381035518	Rename package 'com.listmovie.cinemadatabase'
+1357381049210	Rename package 'com.listmovie.googleplace'
+1357382117477	Move compilation unit
+1357382123523	Delete element
+1357382129488	Delete elements
+1357384156492	Move compilation unit
+1357386032545	Delete element
+1357389574786	Rename resource 'action_bar_tab_content.xml'
+1357389583757	Copy file
+1357389610902	Rename resource 'Copy of action_bar_tab_cinema_tickets.xml'
+1357390810039	Rename method 'getWord'
+1357392477069	Rename type 'ActionBarDisplayOptions'
+1357392885724	Rename local variable 'result'
+1357399632195	Delete element

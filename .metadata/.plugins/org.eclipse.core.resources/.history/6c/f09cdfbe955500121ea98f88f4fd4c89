@@ -1,0 +1,91 @@
+package com.listmovie;
+
+import java.util.List;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+import com.listmovie.CinemasItemizedOverlay;
+import com.listmovie.R;
+import com.listmovie.utils.GeoUpdateHandler;
+import com.listmovie.utils.GooglePlace;
+import com.listmovie.utils.GooglePlaces;
+import com.listmovie.utils.PlacesList;
+
+public class GoogleMapActivity extends MapActivity {
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.map);
+		final MapView mapView = (MapView) findViewById(R.id.mapview);
+
+	    MapController mapController = mapView.getController();
+	    mapController.setZoom(14); 
+	    
+	    Drawable drawable = this.getResources().getDrawable(android.R.drawable.arrow_up_float);
+	    CinemasItemizedOverlay itemizedoverlay = new CinemasItemizedOverlay(drawable);
+	    
+		mapView.setBuiltInZoomControls(true);
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+	        0, new GeoUpdateHandler(mapController, mapView, itemizedoverlay));
+
+	    final MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mapView);
+	    mapView.getOverlays().add(myLocationOverlay);
+
+	    myLocationOverlay.runOnFirstFix(new Runnable() {
+	        public void run() {
+	            mapView.getController().animateTo(myLocationOverlay.getMyLocation());
+	        }
+	    });
+
+
+	    
+    	new AsyncTask<Integer, Integer, PlacesList> () {
+    		@Override
+    		protected PlacesList doInBackground(Integer... params) {
+    			PlacesList list = null;
+    			try {
+    				list = new GooglePlaces().search(48.466601, 35.018155, 5500, "театр");
+    			} catch (Exception e) {
+    				Log.e("Places list some bug:", e.getMessage());
+    			}
+    			return list;
+    		}
+    		protected void onPostExecute(PlacesList result) {
+    			
+    		    List<Overlay> mapOverlays = mapView.getOverlays();
+    		    Drawable drawable = GoogleMapActivity.this.getResources().getDrawable(android.R.drawable.arrow_down_float);
+    		    CinemasItemizedOverlay itemizedoverlay = new CinemasItemizedOverlay(drawable, GoogleMapActivity.this);
+    		    for (GooglePlace place : result.results) {
+    		    	int lat = (int) (1000000 * place.geometry.location.lat);
+    		    	int lng = (int) (1000000 * place.geometry.location.lng);
+    		    	GeoPoint point = new GeoPoint(lat, lng);
+        	    	OverlayItem overlayitem = new OverlayItem(point, place.name, place.formatted_address);
+        	    	itemizedoverlay.addOverlay(overlayitem);
+        	    	mapOverlays.add(itemizedoverlay);
+    		    }
+    		};
+    	}.execute(0);
+    	
+    	
+	}
+	 
+	@Override
+    protected boolean isRouteDisplayed() {
+        return false;
+    }
+	
+}

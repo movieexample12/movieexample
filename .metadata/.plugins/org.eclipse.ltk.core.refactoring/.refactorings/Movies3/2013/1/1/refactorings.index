@@ -1,0 +1,24 @@
+1357140857806	Rename type 'PlacesRequestBuilder'
+1357140915681	Delete element
+1357142109754	Encapsulate field 'iconUrl'
+1357142125797	Encapsulate field 'iconUrl'
+1357142134213	Encapsulate field 'name'
+1357142144426	Encapsulate field 'rating'
+1357142152351	Encapsulate field 'address'
+1357142193280	Rename type 'GooglePlaces'
+1357142631981	Encapsulate field 'location'
+1357142955072	Rename type 'GooglePlace'
+1357142990289	Rename type 'GooglePlaces'
+1357143112440	Move compilation unit
+1357144410670	Encapsulate field 'reference'
+1357147793050	Rename type 'GooglePlaceManager'
+1357197728700	Delete elements
+1357197741999	Delete elements
+1357197828796	Delete element
+1357198395068	Delete element
+1357200770086	Delete elements
+1357201279269	Move compilation unit
+1357201300444	Copy compilation units
+1357201425353	Move compilation unit
+1357201471423	Copy file
+1357201580368	Move file

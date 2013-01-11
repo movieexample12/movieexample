@@ -1,0 +1,230 @@
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.listmovie.cinema.database;
+
+import java.util.List;
+
+import com.listmovie.googleplace.GooglePlace;
+import android.app.SearchManager;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.provider.BaseColumns;
+
+/**
+ * Provides access to the dictionary database.
+ */
+public class CinemaProvider extends ContentProvider {
+    String TAG = CinemaProvider.class.getName();
+
+    public static final String AUTHORITY = "com.listmovie.cinemadatabase.CinemaProvider";
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/dictionary");
+
+    /**
+     * The content URI base for a single note. Callers must
+     * append a numeric note id to this Uri to retrieve a note
+     */
+    public static final Uri CONTENT_ID_URI_BASE
+        = Uri.parse(CONTENT_URI + "/");
+
+    // MIME types used for searching words or looking up a single definition
+    public static final String CINEMAS_MIME_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
+                                                  "/vnd.example.android.searchabledict";
+    public static final String DEFINITION_MIME_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
+                                                       "/vnd.example.android.searchabledict";
+
+    private CinemaDatabase mDictionary;
+    private CinemaOpenHelper mOpenHelper;
+    // UriMatcher stuff
+    private static final int CINEMAS = 0;
+    private static final int CINEMA_ID = 1;
+
+    /**
+     * A UriMatcher instance
+     */
+    private static final UriMatcher sUriMatcher;
+    
+    static {
+
+        /*
+         * Creates and initializes the URI matcher
+         */
+        // Create a new instance
+        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        // Add a pattern that routes URIs terminated with "cinemas" to a add operation
+        sUriMatcher.addURI(AUTHORITY, "dictionary", CINEMAS);
+        sUriMatcher.addURI(AUTHORITY, "dictionary/#", CINEMA_ID);
+
+    }
+
+    @Override
+    public boolean onCreate() {
+        mDictionary = new CinemaDatabase(getContext());
+        mOpenHelper = new CinemaOpenHelper(getContext());
+        return true;
+    }
+
+    /**
+     * Handles all the dictionary searches and suggestion queries from the Search Manager.
+     * When requesting a specific word, the uri alone is required.
+     * When searching all of the dictionary for matches, the selectionArgs argument must carry
+     * the search query as the first element.
+     * All other arguments are ignored.
+     */
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
+                        String sortOrder) {
+
+        // Use the UriMatcher to see what kind of query we have and format the db query accordingly
+        switch (sUriMatcher.match(uri)) {
+//            case SEARCH_SUGGEST:
+//                if (selectionArgs == null) {
+//                  throw new IllegalArgumentException(
+//                      "selectionArgs must be provided for the Uri: " + uri);
+//                }
+//                return getSuggestions(selectionArgs[0]);
+//            case CINEMA_ID:
+//                if (selectionArgs == null) {
+//                  throw new IllegalArgumentException(
+//                      "selectionArgs must be provided for the Uri: " + uri);
+//                }
+//                return search(selectionArgs[0]);
+            case CINEMA_ID:
+                return getCinema(uri);
+//            case REFRESH_SHORTCUT:
+//                return refreshShortcut(uri);
+            case CINEMAS:
+            	throw new IllegalArgumentException("Add was called here: " + uri);
+            	
+            default:
+                throw new IllegalArgumentException("Unknown Uri: " + uri);
+        }
+    }
+    
+
+//    private Cursor getSuggestions(String query) {
+//      query = query.toLowerCase();
+//      String[] columns = new String[] {
+//          BaseColumns._ID,
+//          CinemaDatabase.KEY_WORD,
+//          CinemaDatabase.KEY_DEFINITION,
+//       /* SearchManager.SUGGEST_COLUMN_SHORTCUT_ID,
+//                        (only if you want to refresh shortcuts) */
+//          SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID};
+//
+//      return mDictionary.getWordMatches(query, columns);
+//    }
+
+    private Cursor search(String query) {
+      query = query.toLowerCase();
+      String[] columns = new String[] {
+          BaseColumns._ID,
+          CinemaDatabase.KEY_WORD,
+          CinemaDatabase.KEY_DEFINITION};
+
+      return mDictionary.getWordMatches(query, columns);
+    }
+
+    private Cursor getCinema(Uri uri) {
+      String rowId = uri.getLastPathSegment();
+      String[] columns = new String[] {
+    		  CinemaDatabase.KEY_WORD,
+    		  CinemaDatabase.KEY_DEFINITION};
+
+      return mDictionary.getWord(rowId, columns);
+    }
+
+     /**
+     * This method is required in order to query the supported types.
+     * It's also useful in our own query() method to determine the type of Uri received.
+     */
+    @Override
+    public String getType(Uri uri) {
+        switch (sUriMatcher.match(uri)) {
+//            case SEARCH_CINEMAS:
+//                return CINEMAS_MIME_TYPE;
+            case CINEMA_ID:
+                return DEFINITION_MIME_TYPE;
+            case CINEMAS:
+            	throw new IllegalArgumentException("Add was called!!! " + uri);
+            default:
+                throw new IllegalArgumentException("Unknown URL " + uri);
+        }
+    }
+
+    // Other required implementations...
+
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+    	// Validates the incoming URI. Only the full provider URI is allowed for inserts.
+        if (sUriMatcher.match(uri) != CINEMAS) {
+            throw new IllegalArgumentException("Here should be ADD uri! " + uri);
+        }
+
+        // Gets the current system time in milliseconds
+        Long now = Long.valueOf(System.currentTimeMillis());
+
+        // If the values map doesn't contain the creation date, sets the value to the current time.
+        if (values.containsKey(Cinema.COLUMN_NAME_CREATE_DATE) == false) {
+            values.put(Cinema.COLUMN_NAME_CREATE_DATE, now);
+        }
+
+        // Opens the database object in "write" mode.
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+
+        // Performs the insert and returns the ID of the new note.
+        long rowId = db.insert(
+            CinemaDatabase.TABLE_NAME,       // The table to insert into.
+            Cinema.COLUMN_NAME_NAME,         // A hack, SQLite sets this column value to null
+                                             // if values is empty.
+            values                           // A map of column names, and the values to insert
+                                             // into the columns.
+        );
+
+        // If the insert succeeded, the row ID exists.
+        if (rowId > 0) {
+            // Creates a URI with the note ID pattern and the new row ID appended to it.
+            Uri noteUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, rowId);
+
+            // Notifies observers registered against this provider that the data changed.
+            getContext().getContentResolver().notifyChange(noteUri, null);
+            return noteUri;
+        }
+
+        // If the insert didn't succeed, then the rowID is <= 0. Throws an exception.
+        throw new SQLException("Failed to insert row into " + uri);
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        throw new UnsupportedOperationException();
+    }
+
+}

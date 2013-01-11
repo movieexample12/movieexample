@@ -1,0 +1,7 @@
+package com.listmovie.overlay;
+
+import com.google.android.maps.OverlayItem;
+
+public class CinemaOverlayItem extends OverlayItem {
+
+}

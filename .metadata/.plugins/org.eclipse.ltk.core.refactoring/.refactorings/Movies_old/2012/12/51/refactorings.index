@@ -1,0 +1,48 @@
+1355733749892	Delete element
+1355733996793	Encapsulate field 'movie'
+1355734005150	Encapsulate field 'thumbUrl'
+1355734019582	Encapsulate field 'thumbUrl'
+1355734028894	Encapsulate field 'thumbPath'
+1355734040983	Encapsulate field 'posterUrl'
+1355734050601	Encapsulate field 'posterPath'
+1355735693276	Rename method 'getThumbFullPath'
+1355746808677	Rename method 'addMovie'
+1355747889121	Copy file
+1355760696610	Rename field 'MID_KEY'
+1355765364785	Move file
+1355817503899	Rename field 'POSTERS_KEY'
+1355817709550	Rename type 'MoviesTask'
+1355817739980	Copy compilation unit
+1355818056988	Rename type 'MovieViewActivity'
+1355818643037	Rename type 'SearchableActivity'
+1355832267592	Delete elements
+1355850661677	Copy file
+1355851386043	Copy compilation unit
+1355903783866	Rename type 'MoviesListActivity'
+1355905736274	Rename type 'MoviesMainActivity'
+1355905745026	Rename type 'MoviesSearchActivity'
+1355905781029	Rename package 'com.listmovie.movies.action'
+1355905794652	Move compilation units
+1355905804383	Move compilation unit
+1355905916222	Rename resource 'activity_main.xml'
+1355905952931	Rename resource 'activity_details.xml'
+1355905963433	Rename resource 'activity_list_item.xml'
+1355905969190	Delete element
+1355905979279	Rename resource 'list_view_footer.xml'
+1355906230660	Rename type 'MovieMainActivity'
+1355906238571	Rename type 'MoviePreferencesActivity'
+1355906245212	Rename type 'MovieSearchActivity'
+1355906258203	Rename type 'MoviePresentationActivity'
+1355906732784	Delete element
+1355914382964	Copy file
+1355916962122	Delete element
+1355923450638	Copy folder
+1355923466162	Copy folder
+1355923953631	Delete element
+1355923955056	Delete element
+1355924802687	Delete element
+1355937517439	Rename method 'createExternalStoragePrivatePicture'
+1355987905923	Rename method 'getProf'
+1355991384552	Rename field 'MAX_LENGTH_BY_DEFAULT'
+1355993126454	Rename method 'getSharedPreferences'
+1355996672754	Rename type 'PresentationActivity'

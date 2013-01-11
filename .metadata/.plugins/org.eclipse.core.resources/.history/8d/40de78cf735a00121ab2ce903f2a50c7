@@ -1,0 +1,98 @@
+package com.listmovie.cinema.ticket;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+
+public class ChairContainer {
+	int d;
+	int xsize;
+	List<Chair> chairs ;
+	Paint mPaint;
+	Canvas canvas;
+	public ChairContainer(Canvas canvas, Paint mPaint, int xCenterFirst, int xend, int yCenterFirst, int yend, int d, List<Integer> arr, int size) {
+        this.d = d;
+        xsize = Double.valueOf(Math.ceil(xend/(double)d)).intValue();
+    	chairs = new ArrayList<Chair>();
+		
+        for (int j = yCenterFirst; j < yend; j += d) {
+        	for (int i = xCenterFirst; i < xend; i += d) {
+				Integer index = j * xsize / d + i / d + 1;
+				if (index > size) {
+          			break;
+          		}
+				Chair c = new Chair(i, j, d/3, index);
+				c.setFree(arr.contains(index));
+				chairs.add(c);	
+			}
+		}
+        this.mPaint = mPaint;
+        this.canvas = canvas;
+	}
+	
+	void draw() {
+		for (Chair c: chairs) {
+			c.draw();
+		}
+	}
+	public void bookChair(float x, float y) {
+		int x0 = (int)x / d; int y0 = (int)y / d;
+		Integer index = y0 * xsize  + x0;
+		chairs.get(index).setFree(false);
+	}
+	
+	class Chair {
+		
+		private final int FREE_COLOR   = Color.BLUE;
+		private final int TEXT_COLOR   = Color.WHITE;
+		private final int BOOKED_COLOR = Color.DKGRAY;
+		
+		private int x, y, r;
+		private boolean isEmpty;
+		private int number;
+		
+		Chair(int x, int y, int r, int number) {
+			this.x = x; this.y = y; this.r = r; this.number = number;
+		}
+		
+		void drawBooked() {
+			isEmpty = false;
+			mPaint.setColor(BOOKED_COLOR);
+			drawImpl();
+		}
+	    
+		void drawFree() {
+			isEmpty = true;
+			mPaint.setColor(FREE_COLOR);
+			drawImpl();
+			mPaint.setColor(TEXT_COLOR);
+			mPaint.setTextSize(16);
+			canvas.drawText(String.valueOf(number), x + r, y + r, mPaint);
+	    }
+
+		void setFree(Boolean isFree) {
+			this.isEmpty = isFree;
+		}
+		
+		void draw() {
+			if (isEmpty) {
+				drawFree();
+			} else {
+				drawBooked();
+			}
+		}
+		
+		private void drawImpl() {
+			int xcenter = x + r;
+			int ycenter = y + r;
+			
+	    	int r2 = r/2;
+	    	canvas.drawRect(xcenter - r2, ycenter - r2, xcenter + r2, ycenter + r2, mPaint);
+	    	canvas.drawRect(xcenter - r, ycenter, xcenter - r2, ycenter + r, mPaint);
+	    	canvas.drawRect(xcenter + r2, ycenter, xcenter + r, ycenter + r, mPaint);
+	    }
+	}
+}

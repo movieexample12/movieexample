@@ -1,0 +1,5 @@
+package com.listmovie.database;
+
+public class CinemaDatabase {
+
+}

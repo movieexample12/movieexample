@@ -1,0 +1,88 @@
+package com.listmovie.database;
+
+import android.net.Uri;
+import android.provider.BaseColumns;
+
+public class Cinema implements BaseColumns {
+	
+	public final static String COLUMN_NAME_NAME           = "name";
+	public final static String COLUMN_NAME_LATITUDE       = "latitude";
+	public final static String COLUMN_NAME_LONGTITUDE     = "longitude";
+	public final static String COLUMN_NAME_VICINITY       = "vicinity";
+	public static final String COLUMN_NAME_CREATE_DATE    = "created";
+	public static final String COLUMN_NAME_OPENING_HOURS  = "openingHours";
+	public static final String COLUMN_NAME_WEBSITE        = "website";
+	public static final String COLUMN_NAME_ICON           = "icon";
+	
+    public static final String AUTHORITY = "com.google.provider.Cinema";
+    
+    /**
+     * The default sort order for this table
+     */
+    public static final String DEFAULT_SORT_ORDER = "modified DESC";
+    
+    /**
+     * The scheme part for this provider's URI
+     */
+    private static final String SCHEME = "content://";
+
+    /**
+     * Path parts for the URIs
+     */
+
+    /**
+     * Path part for the Cinemas URI
+     */
+    private static final String PATH_CINEMAS = "/cinemas";
+
+    /**
+     * Path part for the Cinema ID URI
+     */
+    private static final String PATH_CINEMA_ID = PATH_CINEMAS + "/";
+
+    /**
+     * 0-relative position of a cinema ID segment in the path part of a cinema ID URI
+     */
+    public static final int CINEMA_ID_PATH_POSITION = 1;
+
+    /**
+     * Path part for the Live Folder URI
+     */
+    private static final String PATH_LIVE_FOLDER = "/live_folders" + PATH_CINEMAS;
+
+    /**
+     * The content:// style URL for this table
+     */
+    public static final Uri CONTENT_URI =  Uri.parse(SCHEME + AUTHORITY + PATH_CINEMAS);
+
+    /**
+     * The content URI base for a single cinema. Callers must
+     * append a numeric note id to this Uri to retrieve a cinema
+     */
+    public static final Uri CONTENT_ID_URI_BASE
+        = Uri.parse(SCHEME + AUTHORITY + PATH_CINEMA_ID);
+
+    /**
+     * The content URI match pattern for a single cinema, specified by its ID. Use this to match
+     * incoming URIs or to construct an Intent.
+     */
+    public static final Uri CONTENT_ID_URI_PATTERN
+        = Uri.parse(SCHEME + AUTHORITY + PATH_CINEMA_ID + "/#");
+
+    /**
+     * The content Uri pattern for a cinemas listing for live folders
+     */
+    public static final Uri LIVE_FOLDER_URI
+        = Uri.parse(SCHEME + AUTHORITY + PATH_LIVE_FOLDER);
+
+    /**
+     * The MIME type of {@link #CONTENT_URI} providing a directory of notes.
+     */
+    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.google.note";
+
+    /**
+     * The MIME type of a {@link #CONTENT_URI} sub-directory of a single
+     * note.
+     */
+    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.google.note";
+}

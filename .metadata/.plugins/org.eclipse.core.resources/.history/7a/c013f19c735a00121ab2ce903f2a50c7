@@ -1,0 +1,5 @@
+package com.listmovie.cinema.ticket;
+
+public class Chair {
+
+}

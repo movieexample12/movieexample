@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_settings"/>
+  
+    <item android:id="@+id/search"
+        android:title="@string/search_title"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="com.listmovie.movies.MoviesSearchActivity" />
+  
+    <!-- item android:id="@+id/preferemces_menu"
+        android:title="@string/preferences_title"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="com.listmovie.movies.MoviePreferencesActivity"/-->
+  
+</menu>

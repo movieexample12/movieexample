@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <PreferenceCategory 
+        android:title="@string/settings"
+        android:key="pref_key_storage_settings">
+        <CheckBoxPreference
+            android:key="external_storage"
+            android:summary="@string/memory_cb"
+            android:title="@string/storage_is_external"
+            android:defaultValue="false" />
+         
+         <ListPreference
+	        android:key="pref_languge"
+	        android:id="@+id/rb_ua"
+	        android:title="@string/pref_languge"
+	        android:dialogTitle="@string/pref_languge"
+	        android:entries="@array/pref_syncConnectionTypes_entries"
+	        android:entryValues="@array/pref_syncConnectionTypes_values"
+	        android:defaultValue="@string/pref_language_default" />
+         
+         <EditTextPreference
+		    android:key="limitOfMovies"
+		    android:summary="@string/limitOfMovies"
+		    android:title="@string/limitOfMovies" />
+         
+         
+    </PreferenceCategory>
+</PreferenceScreen>
+
+    

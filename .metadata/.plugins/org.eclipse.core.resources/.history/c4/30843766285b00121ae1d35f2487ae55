@@ -1,0 +1,102 @@
+package com.listmovie.movies;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONException;
+
+import net.sf.jtmdb.BrowseOptions;
+import net.sf.jtmdb.GeneralSettings;
+import net.sf.jtmdb.Movie;
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.listmovie.utils.MovieConstants;
+
+@SuppressLint({ "SimpleDateFormat", "UseSparseArrays" })
+public class MoviesListTask extends AsyncTask<Integer, String, List<Movie>> {
+
+	private static final String TAG = MoviesListTask.class.getSimpleName();
+
+	private List<Movie> movies = new ArrayList<Movie>();
+	
+	private int moviesLimit;
+	private int alreadyFetched;
+	
+	public Boolean taskEnded = Boolean.FALSE;
+	
+	public boolean limitOfMoviesExtended() {
+		return getCountOfAllMovies() >= moviesLimit;
+	}
+	
+	public int getCountOfAllMovies() {
+		return movies.size() + alreadyFetched;
+	}
+	
+	/* need for Loading... string */
+
+	protected List<net.sf.jtmdb.Movie> getMovies(final Integer page) {
+		
+		if (!limitOfMoviesExtended()) {
+			try {
+				return net.sf.jtmdb.Movie.browse(new BrowseOptions(){
+				
+					private static final long serialVersionUID = -4620142785033329241L;
+	
+					@Override
+					public ORDER_BY getOrderBy() {
+						return ORDER_BY.RATING;
+					}
+					@Override
+					public ORDER getOrder() {
+						return ORDER.DESC;
+					}
+					
+					@Override
+					public Integer getMinVotes() {
+						return 5;
+					}
+					
+					@Override
+					public Integer getPerPage() {
+						return Integer.valueOf(MovieConstants.LIMIT_PER_PAGE);//etPerPageCount(page) ;TODO:!!!
+					}
+					
+					@Override
+					public Integer getPage() {
+						return page;
+					}
+					
+				});
+			} catch( Exception e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	protected List<Movie> doInBackground(Integer ... params) {
+		GeneralSettings.setApiKey(MovieConstants.API_KEY);
+		List<Movie> moviesOld = getMovies(params[0]);
+		for (Movie m: moviesOld) {
+			try {
+				m = net.sf.jtmdb.Movie.getInfo(m.getID());
+				movies.add(m);
+				publishProgress(m.getName());
+			} catch (Exception e) {
+				publishProgress(m.getName() + " is failed...");
+			} 
+		}
+		return movies;
+	}
+	
+	public MoviesListTask(int moviesLimit, int alreadyFetchedMovies) {
+		super();
+		this.alreadyFetched = alreadyFetchedMovies;
+		this.moviesLimit = moviesLimit;
+	}
+	
+}

@@ -1,0 +1,48 @@
+1357633197191	Rename method 'getFreePlacesCount'
+1357635072564	Delete element
+1357637038614	Delete element
+1357640068854	Rename local variable 'r4'
+1357643019882	Rename method 'getMoviesLmit'
+1357643760102	Rename field 'resultMovies'
+1357643881772	Rename field 'LIMIT_BY_DEFAULT'
+1357643900252	Rename local variable 'def_lim'
+1357644790354	Delete element
+1357644802440	Delete element
+1357644928496	Delete element
+1357646674062	Rename field 'dialog'
+1357646685620	Rename field 'processDialog'
+1357648518844	Rename method 'countOfmovies'
+1357652761877	Delete element
+1357655945576	Delete element
+1357656000337	Rename resource 'action_bar_display_options.xml'
+1357656011711	Rename resource 'action_bar_tab_cinema_details.xml'
+1357656034955	Rename resource 'action_bar_tab_cinema_tickets.xml'
+1357661434406	Move file
+1357714711940	Rename local variable 'xcenter'
+1357714734669	Rename local variable 'ycenter'
+1357714745032	Rename local variable 'radius'
+1357727391722	Rename field 'freeColor'
+1357727405307	Rename field 'textColor'
+1357727428530	Rename field 'bookedColor'
+1357732605532	Rename field 'runinme'
+1357741988980	Delete element
+1357742007635	Rename resource 'icon48x48_2.png'
+1357743371562	Rename resource 'ic_menu_settings_holo_light.png'
+1357743386969	Rename resource 'ic_menu_settings_holo_light.png'
+1357743408875	Rename resource 'ic_menu_settings_holo_light.png'
+1357744278348	Rename resource 'settings.png'
+1357744309513	Rename resource 'settings.png'
+1357744321553	Rename resource 'settings.png'
+1357745962655	Rename field 'c'
+1357746032505	Rename package 'com.listmovie.cimena.ticket'
+1357746337586	Delete element
+1357747152402	Delete element
+1357749024855	Delete element
+1357752801166	Rename local variable 'distance'
+1357806189107	Rename field 'bx'
+1357806200917	Rename field 'by'
+1357809474619	Rename type 'GooglePlaces'
+1357812943869	Move compilation unit
+1357821341173	Delete element
+1357831314575	Delete element
+1357902313456	Delete element

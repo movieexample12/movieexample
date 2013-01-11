@@ -1,0 +1,391 @@
+package com.listmovie;
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.TextView;
+
+import com.listmovie.cinema.database.Cinema;
+import com.listmovie.cinema.database.CinemaProvider;
+
+/**
+ * This demo shows how various action bar display option flags can be combined and their effects.
+ */
+public class CinemaTabsBar extends Activity {
+    
+    private ISavedPlace savedPlace;
+   
+    private ISavedPlace getSavedPlace() {
+    	if (savedPlace == null) {
+    		savedPlace = new ISavedPlace(){
+				@Override
+				public String getName() {
+					return "test name";
+				}
+
+				@Override
+				public String getVicinity() {
+					return "test vicinity";
+				}
+
+				@Override
+				public String getOpenHours() {
+					return "test open hours";
+				}
+
+				@Override
+				public List<Integer> getFreePlacesArray() {
+					Integer [] iarr = new Integer []{1, 3, 5, 8};
+					return Arrays.asList(iarr);
+				}
+
+				@Override
+				public int getPlacesCount() {
+					return 10;
+				}
+    			
+    		};
+    		//savedPlace = new SavedPlace();
+    	}
+    	return savedPlace;
+    }
+    
+    private interface ISavedPlace {
+    	public String getName();
+    	public String getVicinity();
+    	public String getOpenHours();
+    	public List<Integer> getFreePlacesArray();
+    	public int getPlacesCount();
+    }
+    
+    private class SavedPlace implements ISavedPlace {
+    	
+    	private Cursor c = null;
+    	
+    	private String getIdCinema() {
+    	  	return getIntent().getStringExtra(Cinema.COLUMN_NAME_ID_S);
+    	}
+    	 
+    	SavedPlace() {
+    		if (c == null) {
+        		c = managedQuery(CinemaProvider.CONTENT_ID_URI_BASE, null, Cinema.COLUMN_NAME_ID_S,
+                    new String[] {getIdCinema()}, null);
+        	}
+    	}
+    	
+    	private Cursor getCursor() {
+    		return c;
+    	}
+    	
+    	public String getName(){
+    		return getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_NAME));
+    	}
+    	
+    	public String getVicinity() {
+    		return getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_VICINITY));
+    	}
+    	
+    	public String getOpenHours() {
+    		return getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_OPENING_HOURS));
+    	}
+    	
+    	public List<Integer> getFreePlacesArray() {
+    		String s = getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_SEATS));
+    		s = s.substring(1, s.length() - 1);
+    		String [] strarr = s.split(", ");
+    		List<Integer> iarr = new ArrayList<Integer>();
+    		for (String str: strarr) {
+    			iarr.add(Integer.valueOf(str));
+    		}
+    		return iarr;
+    	}
+    	
+    	public int getPlacesCount() {
+    		return Integer.valueOf(getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_SEATSSIZE)));
+    	}
+    	
+    }
+   
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        setContentView(R.layout.tabs_display_options);   
+        
+        final ActionBar bar = getActionBar();
+        
+        String c_details = "cinema_details";
+        String c_tickets = "tickets";
+        
+        TabCinemaDetailsFragment detTab = new TabCinemaDetailsFragment();
+        TabCinemaTicketsFragment cinTab = new TabCinemaTicketsFragment();
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        bar.addTab(bar.newTab()
+                .setText(c_details)
+                .setTabListener(new TabListener(detTab)));
+        bar.addTab(bar.newTab()
+                .setText(c_tickets)
+                .setTabListener(new TabListener(cinTab)));
+        
+ 
+    }
+        
+    private class TabListener implements ActionBar.TabListener {
+
+        public Fragment fragment;
+        
+        public TabListener(Fragment fragment) {
+            this.fragment = fragment;
+        }
+         
+        @Override
+        public void onTabSelected(Tab tab, FragmentTransaction ft) {
+            ft.replace(R.id.fragment_content, fragment);
+        }
+         
+        @Override
+        public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+            ft.remove(fragment);
+        }
+
+		@Override
+		public void onTabReselected(Tab tab,
+				FragmentTransaction fragmenttransaction) {
+		}
+
+    }
+    
+    private class DrawableView extends View {
+    	private static final int LAYER_FLAGS = Canvas.MATRIX_SAVE_FLAG |
+                Canvas.CLIP_SAVE_FLAG |
+                Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
+                Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
+                Canvas.CLIP_TO_LAYER_SAVE_FLAG;
+
+        private Paint mPaint;
+        ChairContainer canvasContainer;
+        public DrawableView(Context context) {
+			super(context);
+            setFocusable(true);
+
+            mPaint = new Paint();
+            mPaint.setAntiAlias(true);
+            
+            this.setOnTouchListener(new View.OnTouchListener(){
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						canvasContainer.bookChair(event.getX(), event.getY());
+						
+						DrawableView.this.invalidate();
+                    }
+                    return true;
+                }
+            });
+		}
+        
+        @SuppressLint("UseSparseArrays")
+		private class ChairContainer {
+        	int xCenterFirst; int xend; int yCenterFirst; int yend; int d;
+        	int xsize;
+        	int ysize;
+        	Canvas canvas;
+        	List<Chair> chairs ;
+        	@SuppressLint("UseSparseArrays")
+			ChairContainer(Canvas canvas, int xCenterFirst, int xend, int yCenterFirst, int yend, int d, List<Integer> arr) {
+        		this.xCenterFirst = xCenterFirst; this.xend = xend; this.d = d;
+        		this.yCenterFirst = yCenterFirst; this.yend = yend;
+                
+        		xsize = Double.valueOf(Math.ceil(xend/(double)d)).intValue();
+                ysize = Double.valueOf(Math.ceil(yend/(double)d)).intValue();
+        		
+                chairs = new ArrayList<Chair>();
+        		
+                for (int j = yCenterFirst; j < yend; j += d) {
+                	for (int i = xCenterFirst; i < xend; i += d) {
+        				Integer index = j * xsize / d + i / d + 1;
+        				if (index > getSavedPlace().getPlacesCount()) {
+                  			break;
+                  		}
+        				Chair c = new Chair(canvas, i, j, d/4, index);
+        				c.setFree(arr.contains(index));
+        				chairs.add(c);	
+        			}
+        		}
+        		this.canvas = canvas;
+        	}
+        	
+        	void draw() {
+        		for (Chair c: chairs) {
+        			c.draw();
+        		}
+        	}
+        	void bookChair(float x, float y) {
+        		int x0 = (int)x / d; int y0 = (int)y / d;
+        		Integer index = y0 * xsize  + x0;
+        		chairs.get(index).setFree(false);
+        	}
+        }
+
+        private class Chair {
+        	int x, y, r;
+        	final int freeColor   = Color.BLUE;
+        	final int textColor   = Color.WHITE;
+        	final int bookedColor = Color.DKGRAY;
+        	
+        	boolean isEmpty;
+        	int number;
+        	Canvas canvas;
+        	
+        	Chair(Canvas canvas, int x, int y, int r, int number) {
+        		this.x = x; this.y = y; this.r = r; this.number = number;
+        		this.canvas = canvas;
+        	}
+        	
+        	void drawBooked() {
+        		isEmpty = false;
+        		mPaint.setColor(bookedColor);
+        		drawImpl();
+        	}
+            
+        	void drawFree() {
+        		isEmpty = true;
+        		mPaint.setColor(freeColor);
+        		drawImpl();
+        		mPaint.setColor(textColor);
+        		mPaint.setTextSize(16);
+        		canvas.drawText(String.valueOf(number), x + r, y + r, mPaint);
+            }
+        
+        	void setFree(Boolean isFree) {
+        		this.isEmpty = isFree;
+        	}
+        	
+        	boolean isFree() {
+        		return isEmpty;
+        	}
+        	
+        	void draw() {
+        		if (isEmpty) {
+        			drawFree();
+        		} else {
+        			drawBooked();
+        		}
+        	}
+        	
+        	private void drawImpl() {
+        		int xcenter = x + r;
+        		int ycenter = y + r;
+        		
+            	int r2 = r/2;
+            	canvas.drawRect(xcenter - r2, ycenter - r2, xcenter + r2, ycenter + r2, mPaint);
+            	canvas.drawRect(xcenter - r, ycenter, xcenter - r2, ycenter + r, mPaint);
+            	canvas.drawRect(xcenter + r2, ycenter, xcenter + r, ycenter + r, mPaint);
+            }
+        }
+        
+        @Override 
+		protected void onDraw(Canvas canvas) {
+
+			canvas.drawColor(Color.WHITE);
+
+            int bx = 10;//border
+            int by = 9;
+
+            int size = getSavedPlace().getPlacesCount();
+            
+            List<Integer> arr = getSavedPlace().getFreePlacesArray();
+            
+            int W = getWidth() - 4 * bx;
+            int H = getHeight() - 4 * by;
+            int d = Double.valueOf(Math.floor(Math.sqrt(W * H /(double)size))).intValue();
+            
+            canvas.translate(bx, by);
+            canvas.saveLayerAlpha(0, 0, getWidth(),  getHeight(), 0x88, LAYER_FLAGS);
+
+            if (canvasContainer == null) {
+                canvasContainer = new ChairContainer(canvas, 0, W, 0, H, d, arr);            	
+            }
+            canvasContainer.draw();
+            canvas.restore();
+            
+        }
+		
+    }
+    
+    private class TabCinemaTicketsFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            
+            return new DrawableView(CinemaTabsBar.this);
+        }
+     
+    }
+    
+    private class TabCinemaDetailsFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View fragView = inflater.inflate(R.layout.tabs_cinema_details, container, false);
+            TextView name = (TextView)fragView.findViewById(R.id.cinema_tab_name);
+            if (name != null ) {
+            	name.setText(getSavedPlace().getName());
+                
+                TextView v = (TextView)fragView.findViewById(R.id.cinema_tab_vicinity);
+                v.setText(getSavedPlace().getVicinity());
+                
+                TextView openNow = (TextView)fragView.findViewById(R.id.cinema_tab_open_now);
+                String openNowValue = getSavedPlace().getOpenHours();
+                if (openNowValue == null) {
+                	openNowValue = "no information, whether it is open or not";
+                }
+                openNow.setText(openNowValue);
+            }
+            
+            return fragView;
+        }
+
+    }
+}

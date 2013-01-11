@@ -1,0 +1,139 @@
+package com.listmovie.movies;
+
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import net.sf.jtmdb.BrowseOptions;
+import net.sf.jtmdb.GeneralSettings;
+import net.sf.jtmdb.Movie;
+
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.listmovie.utils.MovieConstants;
+
+
+@SuppressLint({ "SimpleDateFormat", "UseSparseArrays" })
+public class MoviesTask extends AsyncTask<Integer, Integer, List<Map<String, String>>> {
+
+	public Boolean taskEnded = Boolean.FALSE;
+	private static final String TAG = MoviesTask.class.getSimpleName();
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+	
+	private static String POSTERS_KEY  = "posters";
+	private static String IMAGE_KEY    = "image";
+	private static String URL_KEY      = "url";
+	private static String THUMB_KEY    = "thumb";
+	private static String SIZE_KEY     = "size";
+	private static Integer IMAGE_INDEX = 0;
+	private static Integer PER_PAGE    = 10;
+		
+	protected Map<Integer, Bitmap> imagesMap = new HashMap<Integer, Bitmap>();
+	List<Map<String, String>> moviesList;
+	MovieViewActivity parentActivity;
+	
+	@Override
+	protected List<Map<String, String>> doInBackground(final Integer ... params) {
+		moviesList = new ArrayList<Map<String, String>>();
+		GeneralSettings.setApiKey(MovieConstants.API_KEY);
+		
+		List<net.sf.jtmdb.Movie> movies = new ArrayList<net.sf.jtmdb.Movie>();
+		
+		try {
+			
+			movies = net.sf.jtmdb.Movie.browse(new BrowseOptions(){
+			
+				private static final long serialVersionUID = -4620142785033329241L;
+
+				@Override
+				public ORDER_BY getOrderBy() {
+					return ORDER_BY.RATING;
+				}
+				@Override
+				public ORDER getOrder() {
+					return ORDER.DESC;
+				}
+				
+				@Override
+				public Integer getMinVotes() {
+					return 5;
+				}
+				
+				@Override
+				public Integer getPerPage() {
+					return PER_PAGE;
+				}
+				
+				@Override
+				public Integer getPage() {
+					return params[0];
+				}
+				
+			});
+		} catch( Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+		int l = movies.size() > 10 ? 10 : movies.size();
+		for (int i = 0; i < l ; ++i) {
+            HashMap<String, String> map = new HashMap<String, String>();
+            Movie movie = movies.get(i);
+            try {
+            	JSONArray posters = null;
+            	JSONObject image = null;
+            	JSONObject moviesJSON = new JSONObject(movie.getJsonOrigin());
+				if (moviesJSON.has(POSTERS_KEY)) {
+					if (moviesJSON.get(POSTERS_KEY) instanceof JSONArray ) {
+						posters = moviesJSON.getJSONArray(POSTERS_KEY);
+						if (posters.length() > 0) {
+							for (int j=0; j < posters.length(); ++j) {
+								image = posters.getJSONObject(IMAGE_INDEX).getJSONObject(IMAGE_KEY);
+								if (THUMB_KEY.equals(image.get(SIZE_KEY))) {
+								    map.put(MovieConstants.KEY_IMAGE_URL, image.getString(URL_KEY));
+								    try {
+									    URL newurl = new URL(String.valueOf(params[1]));
+									    imagesMap.put(PER_PAGE * (params[0] - 1) + i, BitmapFactory.decodeStream(newurl.openConnection().getInputStream()));
+									} catch (Exception e) {
+										Log.e(LazyAdapter.class.getSimpleName(), e.getMessage());
+									}
+								    break;
+								}
+							}
+						}
+					}
+				}
+			} catch (JSONException e) {
+				Log.e(TAG, "Error while parsing json");
+			}
+            
+            map.put(MovieConstants.KEY_TITLE, movie.getName());
+            map.put(MovieConstants.KEY_RELEASE_DATE, sdf.format(movie.getReleasedDate()));
+            
+            moviesList.add(map);
+        }
+        return moviesList;
+	}
+	
+	@Override
+	protected void onPreExecute() {
+		taskEnded = Boolean.TRUE;
+		super.onPreExecute();
+	}
+	
+	public MoviesTask(MovieViewActivity parentActivity) {
+		super();
+		this.parentActivity = parentActivity;
+		imagesMap = new HashMap<Integer, Bitmap>();
+	}
+	
+}

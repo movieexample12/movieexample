@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/app_label"
+    android:hint="@string/search_hint" 
+    >
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/search_hint"
+    android:hint="@string/hint"
+    android:searchSuggestAuthority="com.app.SearchInterfaceDemo"
+    android:searchSuggestSelection=" ? "
+    android:searchSettingsDescription="@string/global"
+    android:includeInGlobalSearch="true"/>
+</searchable>

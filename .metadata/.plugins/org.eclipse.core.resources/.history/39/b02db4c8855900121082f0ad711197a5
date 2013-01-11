@@ -1,0 +1,117 @@
+package com.listmovie.movies;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.jtmdb.BrowseOptions;
+import net.sf.jtmdb.GeneralSettings;
+import net.sf.jtmdb.Movie;
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.listmovie.MainActivity;
+import com.listmovie.utils.MovieConstants;
+import com.listmovie.utils.SharedPreferencesManager;
+
+@SuppressLint({ "SimpleDateFormat", "UseSparseArrays" })
+public class MoviesListTask extends AsyncTask<Integer, Integer, Boolean> {
+
+	private static final String TAG = MoviesListTask.class.getSimpleName();
+
+	private List<Movie> movies = new ArrayList<Movie>();
+	
+	private int moviesLimit;
+	private int alreadyFetched;
+	
+	public Boolean taskEnded = Boolean.FALSE;
+	
+	public boolean limitOfMoviesExtended() {
+		return getCountOfAllMovies() >= moviesLimit;
+	}
+	
+	public int getCountOfAllMovies() {
+		return movies.size() + alreadyFetched;
+	}
+	
+	private int getPerPageCount(int page) {
+		Integer lim = moviesLimit;
+		Integer max_per_page = Integer.valueOf(MovieConstants.LIMIT_PER_PAGE);
+		if (lim < max_per_page) {
+			return lim;
+		} else if (lim - getCountOfAllMovies() < max_per_page) { 
+			lim = lim - getCountOfAllMovies();
+		} else {
+			lim = max_per_page;
+		}
+		return lim;
+	}
+	
+
+	protected List<net.sf.jtmdb.Movie> getMovies(final Integer page) {
+		
+		List<net.sf.jtmdb.Movie> movies = new ArrayList<net.sf.jtmdb.Movie>();
+		if (!limitOfMoviesExtended()) {
+			try {
+				movies = net.sf.jtmdb.Movie.browse(new BrowseOptions(){
+				
+					private static final long serialVersionUID = -4620142785033329241L;
+	
+					@Override
+					public ORDER_BY getOrderBy() {
+						return ORDER_BY.RATING;
+					}
+					@Override
+					public ORDER getOrder() {
+						return ORDER.DESC;
+					}
+					
+					@Override
+					public Integer getMinVotes() {
+						return 5;
+					}
+					
+					@Override
+					public Integer getPerPage() {
+						return getPerPageCount(page) ;
+					}
+					
+					@Override
+					public Integer getPage() {
+						return page;
+					}
+					
+				});
+			} catch( Exception e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+		return movies;
+	}
+	
+	@Override
+	protected Boolean doInBackground(Integer ... params) {
+		GeneralSettings.setApiKey(MovieConstants.API_KEY);
+		List<net.sf.jtmdb.Movie> movies = getMovies(params[0]);
+		int l = moviesLimit;
+		for (int i = 0; i < movies.size() && i < l; ++i) {
+            Movie movie = movies.get(i);
+            movies.add(movie);
+            publishProgress(i+1);
+        }
+		return Boolean.TRUE;
+	}
+	
+	@Override
+	protected void onPostExecute(Boolean result) {
+		taskEnded = result;
+		super.onPostExecute(result);
+	}
+	
+	public MoviesListTask(int moviesLimit, int alreadyFetchedMovies) {
+		super();
+		this.alreadyFetched = alreadyFetchedMovies;
+		this.moviesLimit = moviesLimit;
+	}
+	
+}

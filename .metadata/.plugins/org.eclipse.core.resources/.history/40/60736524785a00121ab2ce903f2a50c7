@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <PreferenceCategory 
+        android:title="@string/settings"
+        android:key="pref_key_storage_settings">
+        <!-- Storage -->
+        <CheckBoxPreference
+            android:key="external_storage"
+            android:summary="@string/memory_cb"
+            android:defaultValue="false" />
+         
+        <!-- Language -->
+         <ListPreference
+	        android:key="pref_languge"
+	        android:id="@+id/rb_ua"
+	        android:title="@string/pref_languge"
+	        android:summary="@string/pref_languge"
+	        android:entries="@array/listOptions"
+	        android:entryValues="@array/listValues"
+	        android:defaultValue="@string/pref_language_default" />
+         
+         <!-- Movies liit -->
+         <EditTextPreference
+		    android:key="limitOfMovies"
+		    android:summary="@string/limitOfMovies"
+		    android:title="@string/limitOfMovies" />
+         
+         <!-- Distance for GPS navigation -->
+         <EditTextPreference
+		    android:key="distance_gps"
+		    android:summary="@string/distance_gps"
+		    android:title="@string/distance_gps" />
+          
+    </PreferenceCategory>
+</PreferenceScreen>
+
+    

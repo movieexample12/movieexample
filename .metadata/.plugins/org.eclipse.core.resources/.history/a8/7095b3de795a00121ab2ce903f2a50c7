@@ -1,0 +1,34 @@
+package com.listmovie.utils;
+
+public class Preferences implements IPreferences {
+	
+    public static final String KEY_DISTANCE_GPS = "distance_gps";
+    public static final String KEY_LIMIT_OF_MOVIES = "limitOfMovies";
+    public static final String KEY_PREF_LANGUAGE = "pref_languge";
+    public static final String KEY_EXTERNAL_STORAGE = "external_storage";
+
+	@Override
+	public int getDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int limitOfMovies() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String prefLanguage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean useExternalStorage() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

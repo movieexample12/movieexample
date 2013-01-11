@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title">Movie title</string>
+    <string name="duration">Duration</string>
+    <string name="app_name">movies</string>
+    <string name="error_loading_items">An error happened while loading data</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="release_date">Release date</string>
+    <string name="actors">Actors</string>
+	<string name="description">Description</string>
+    <string name="search_hint">Search</string>
+    <string name="app_label">MoviesList2</string>
+    <string name="search_title">Search</string>
+    <string name="memory_cb">Check if you want save files to external storage(otherwise it will be internal memory)</string>
+    <string name="preferences_title">Settings</string>
+    <string name="rblanguage_en">EN</string>
+    <string name="rblanguage_ua">UA</string>
+    <string name="limitOfMovies">Limit of movies from external system.</string>
+    <string name="limit_button">Set Limit</string>
+    <string name="ok">OK</string>
+    <string name="title_dialog">Limit should be &lt;5 and &gt;20! Now it will be set to 10. </string>
+    <string name="external_device_does_not_work">External device does not work. </string>
+    <string name="trailer_label">Trailer</string>
+    <string name="no_trailer_label">There are no trailer for this movie.</string>
+    <string name="hint">Enter some first letters of the searching movie.</string>
+    <string name="global">Search any word</string>
+    <string name="trailer_button">Watch trailer</string>
+    <string name="map_title">Map</string>
+</resources>

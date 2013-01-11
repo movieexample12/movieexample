@@ -1,0 +1,59 @@
+package com.listmovie.cimena.ticket;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.database.Cursor;
+
+import com.listmovie.cinema.database.Cinema;
+import com.listmovie.cinema.database.CinemaProvider;
+
+public class SavedPlace implements ISavedPlace {
+
+
+	
+	private Cursor c = null;
+	
+	private String getIdCinema() {
+	  	return getIntent().getStringExtra(Cinema.COLUMN_NAME_ID_S);
+	}
+	 
+	SavedPlace() {
+		if (c == null) {
+    		c = managedQuery(CinemaProvider.CONTENT_ID_URI_BASE, null, Cinema.COLUMN_NAME_ID_S,
+                new String[] {getIdCinema()}, null);
+    	}
+	}
+	
+	private Cursor getCursor() {
+		return c;
+	}
+	
+	public String getName(){
+		return getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_NAME));
+	}
+	
+	public String getVicinity() {
+		return getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_VICINITY));
+	}
+	
+	public String getOpenHours() {
+		return getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_OPENING_HOURS));
+	}
+	
+	public List<Integer> getFreePlacesArray() {
+		String s = getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_SEATS));
+		s = s.substring(1, s.length() - 1);
+		String [] strarr = s.split(", ");
+		List<Integer> iarr = new ArrayList<Integer>();
+		for (String str: strarr) {
+			iarr.add(Integer.valueOf(str));
+		}
+		return iarr;
+	}
+	
+	public int getPlacesCount() {
+		return Integer.valueOf(getCursor().getString( getCursor().getColumnIndex(Cinema.COLUMN_NAME_SEATSSIZE)));
+	}
+
+}

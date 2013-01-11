@@ -1,0 +1,39 @@
+package com.listmovie.utils;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+public class SharedPreferencesManager implements IPreferences {
+	
+	private SharedPreferences settings;
+	
+	public SharedPreferencesManager(Context context) {
+		settings = context.getSharedPreferences(MovieConstants.KEY_SHARED_PREFS, 0);
+	}
+	
+	public static final String KEY_DISTANCE_GPS = "distance_gps";
+    public static final String KEY_LIMIT_OF_MOVIES = "limitOfMovies";
+    public static final String KEY_PREF_LANGUAGE = "pref_languge";
+    public static final String KEY_EXTERNAL_STORAGE = "external_storage";
+    
+	@Override
+	public int getDistance() {
+		return settings.getInt(MovieConstants.KEY_DISTANCE_GPS, 500);
+	}
+
+	@Override
+	public int limitOfMovies() {
+		return settings.getInt(MovieConstants.KEY_LIMIT_OF_MOVIES, 5);
+	}
+
+	@Override
+	public String prefLanguage() {
+		return settings.getString(MovieConstants.KEY_PREF_LANGUAGE, "en");
+	}
+
+	@Override
+	public boolean useExternalStorage() {
+		return settings.getBoolean(MovieConstants.KEY_EXTERNAL_STORAGE, false);
+	}
+	
+}

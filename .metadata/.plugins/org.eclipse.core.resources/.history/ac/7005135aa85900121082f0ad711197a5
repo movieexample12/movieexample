@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <PreferenceCategory 
+        android:title="@string/pref_sms_storage_title"
+        android:key="pref_key_storage_settings">
+        <CheckBoxPreference
+            android:key="external_storage"
+            android:summary="@string/memory_cb"
+            android:title="@string/storage_is_external"
+            android:defaultValue="false" />
+         
+         <ListPreference
+	        android:key="pref_languge"
+	        android:id="@+id/rb_ua"
+	        android:title="@string/pref_languge"
+	        android:dialogTitle="@string/pref_languge"
+	        android:entries="@array/pref_syncConnectionTypes_entries"
+	        android:entryValues="@array/pref_syncConnectionTypes_values"
+	        android:defaultValue="@string/pref_language_default" />
+         
+         <EditTextPreference
+		    android:key="username"
+		    android:summary="Please enter your login username"
+		    android:title="Username" />
+         
+         
+    </PreferenceCategory>
+</PreferenceScreen>
+
+<LinearLayout android:id="@+id/preferences"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
+    <TextView
+        android:id="@+id/preferences_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/preferences_title" />
+
+    <CheckBox
+        android:id="@+id/memory_cb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/memory_cb" 
+        android:onClick="cb_memoryChecked"/>
+    
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton 
+        	android:id="@+id/rb_ua"
+        	android:text="@string/rblanguage_ua" 
+        	android:checked="false"
+        	android:onClick="rb_uaLocaleChecked"/>
+        <RadioButton 
+        	android:id="@+id/rb_en"
+        	android:text="@string/rblanguage_en" 
+        	android:checked="true"
+        	android:onClick="rb_enLocaleChecked"/>
+   </RadioGroup>
+   
+   <TextView
+       android:id="@+id/limitOfMovies_label" 
+       android:text="@string/limitOfMovies"
+       android:layout_height="wrap_content" 
+       android:layout_width="match_parent" />
+   
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent">
+   
+   <EditText 
+       android:layout_height="40sp" 
+       android:layout_width="80sp"
+       android:id="@+id/limitOfMovies" 
+	   android:inputType="number"
+	   android:text="" 
+	   />
+   <Button 
+       android:layout_height="40sp" 
+       android:layout_width="160sp"
+       android:id="@+id/limitButton" 
+	   android:text="@string/limit_button" 
+       />
+
+   </LinearLayout>
+</LinearLayout>
+    

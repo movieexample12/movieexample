@@ -1,0 +1,70 @@
+package com.listmovie.database;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import com.listmovie.googleplace.GooglePlace;
+import com.listmovie.googleplace.GooglePlaceDetails;
+import com.listmovie.googleplace.GooglePlaces;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
+import android.util.Log;
+
+public class CinemaOpenHelper extends SQLiteOpenHelper {
+
+	private static final String TAG = CinemaOpenHelper.class.getName();
+	
+    private final Context mHelperContext;
+    private SQLiteDatabase mDatabase;
+    
+
+    private static final String TABLE_CREATE =
+    		"CREATE TABLE " + TABLE_NAME + " ("
+                    + Cinema._ID + " INTEGER PRIMARY KEY,"
+                    + Cinema.COLUMN_NAME_LATITUDE + " TEXT,"
+                    + Cinema.COLUMN_NAME_LONGTITUDE + " TEXT,"
+                    + Cinema.COLUMN_NAME_NAME + " TEXT,"
+                    + Cinema.COLUMN_NAME_VICINITY + " TEXT"
+                    + ");";
+
+    public CinemaOpenHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mHelperContext = context;
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        mDatabase = db;
+        mDatabase.execSQL(TABLE_CREATE);
+    }
+
+     /**
+     * Add a cinema to the dictionary.
+     * @return rowId or -1 if failed
+     * @throws Exception 
+     */
+    public long addCinema(GooglePlace place) throws Exception {
+        GooglePlaceDetails details = GooglePlaces.getPlaceDetails(place.reference);
+        
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("", details.result.formatted_address);
+
+        return mDatabase.insert(TABLE_NAME, null, initialValues);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+                + newVersion + ", which will destroy all old data");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
+    }
+
+}

@@ -1,0 +1,37 @@
+package com.listmovie.cimena.ticket;
+
+import java.util.List;
+
+public class SavedPlace implements ISavedPlace {
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getVicinity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getOpenHours() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Integer> getFreePlacesArray() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getPlacesCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

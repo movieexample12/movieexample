@@ -1,0 +1,16 @@
+package com.listmovie.cinema.overlay;
+
+import android.net.Uri;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.OverlayItem;
+
+public class CinemaOverlayItem extends OverlayItem {
+
+	public final Uri uri;
+	public CinemaOverlayItem(GeoPoint geopoint, String s, String s1, Uri uri) {
+		super(geopoint, s, s1);
+		this.uri = uri;
+	}
+
+}

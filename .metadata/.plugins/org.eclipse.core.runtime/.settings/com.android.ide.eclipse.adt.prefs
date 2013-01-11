@@ -1,0 +1,8 @@
+com.android.ide.eclipse.adt.attrSort=logical
+com.android.ide.eclipse.adt.emuOptions=-http-proxy proxy.softservecom.com\:8080
+com.android.ide.eclipse.adt.fixLegacyEditors=1
+com.android.ide.eclipse.adt.sdk=C\:\\eclipse\\sdk
+com.android.ide.eclipse.adt.xmlEditor=true
+design.palette.flyout.width=279
+design.structure.flyout.width=164
+eclipse.preferences.version=1

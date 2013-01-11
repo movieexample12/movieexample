@@ -1,0 +1,22 @@
+package com.listmovie.utils;
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.google.api.client.util.Key;
+
+public class OpeningHours implements Serializable {
+	  @Key
+	  public String open_now;
+	 
+	  @Key
+	  public List<OpeningHoursPeriods> periods;
+	 
+	  @Override
+	  public String toString() {
+	      if (periods!=null) {
+	          return periods.toString();
+	      }
+	      return super.toString();
+	  }
+}

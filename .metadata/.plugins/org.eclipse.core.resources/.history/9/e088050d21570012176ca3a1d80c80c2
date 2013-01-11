@@ -1,0 +1,14 @@
+package com.listmovie.overlay;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.OverlayItem;
+
+public class CinemaOverlayItem extends OverlayItem {
+
+	public final String id;
+	public CinemaOverlayItem(GeoPoint geopoint, String s, String s1, String id) {
+		super(geopoint, s, s1);
+		this.id = id;
+	}
+
+}

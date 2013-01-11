@@ -1,0 +1,29 @@
+package com.listmovie.utils;
+
+public class Preferences implements IPreferences {
+
+	@Override
+	public int getDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int limitOfMovies() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String prefLanguage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean useExternalStorage() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

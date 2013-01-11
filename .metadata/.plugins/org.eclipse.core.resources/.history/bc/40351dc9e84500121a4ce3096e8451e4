@@ -1,0 +1,66 @@
+package com.listmovie.movies;
+
+import com.example.listmovie.R;
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.ListView;
+import android.widget.AbsListView.OnScrollListener;
+
+public class MovieViewActivity extends ListActivity implements OnScrollListener  {
+	
+    private ListView list = null;
+    private LazyAdapter adapter = null;
+    private View footer = null;
+    private Boolean previosTaskEnded = Boolean.TRUE;
+    private int pageNum = 1;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //footer = getLayoutInflater().inflate(R.layout.list_view_footer, null);
+        list = getListView();
+      //  list.addFooterView(footer); 
+	 	list.setAdapter(adapter);
+		list.setOnScrollListener(this);
+	//	adapter = new LazyAdapter(this);
+//		loadPage();
+//        list.setOnScrollListener(this);
+    }
+
+    private void loadPage() {
+//    	if (previosTaskEnded) {
+//			previosTaskEnded = Boolean.FALSE; 
+//        	new MoviesTask(this){
+//             	protected void onPostExecute(java.util.List<java.util.Map<String,String>> result) {
+//             		super.onPostExecute(result);
+//             		
+//             		list.setAdapter(adapter);
+//             		adapter.add(result);
+//        			adapter.notifyDataSetChanged();
+//        			int index = list.getFirstVisiblePosition();
+//        			int top = (list.getChildAt(0) == null) ? 0 : list.getChildAt(0).getTop();
+//        			list.setSelectionFromTop(index, top);
+//             		
+//        			//previosTaskEnded = Boolean.TRUE;
+//             	};
+//            }.execute(pageNum);
+//             
+//            pageNum += 1;
+//		}
+    }
+    
+    @Override
+	public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
+		if (firstVisible + visibleCount >= totalCount) {
+		//	loadPage();
+		}
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView arg0, int arg1) {
+	}
+
+}

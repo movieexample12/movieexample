@@ -1,0 +1,67 @@
+package com.listmovie.utils;
+
+import java.util.Locale;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+public class SharedPreferencesManager implements IPreferences {
+	
+	private Context context;
+	private SharedPreferences settings;
+	
+	public SharedPreferencesManager(Context context) {
+		this.context = context;
+	}
+	
+	public static final String KEY_DISTANCE_GPS = "distance_gps";
+    public static final String KEY_LIMIT_OF_MOVIES = "limitOfMovies";
+    public static final String KEY_PREF_LANGUAGE = "pref_languge";
+    public static final String KEY_EXTERNAL_STORAGE = "external_storage";
+    
+	private SharedPreferences getSharedPreferences() {
+		settings = getSharedPreferences();
+		return context.getSharedPreferences(MovieConstants.KEY_SHARED_PREFS, 0);
+	}
+
+	@Override
+	public int getDistance() {
+		return settings.getInt(MovieConstants.KEY_DISTANCE_GPS, 500);
+	}
+
+	@Override
+	public int limitOfMovies() {
+		return settings.getInt(MovieConstants.KEY_LIMIT_OF_MOVIES, 5);
+	}
+
+	@Override
+	public String prefLanguage() {
+		return settings.getString(MovieConstants.KEY_PREF_LANGUAGE, "en");
+	}
+
+	@Override
+	public boolean useExternalStorage() {
+		return settings.getBoolean(MovieConstants.KEY_EXTERNAL_STORAGE, false);
+	}
+	
+	
+	
+	private  String getPreferences(String key, String dv) {
+ 		
+	    return settings.getString(key,  dv);	
+	}
+	
+//	public  void addPreferences(String key, String value) {
+//		SharedPreferences settings = getSharedPreferences();
+//        SharedPreferences.Editor editor = settings.edit();
+//        editor.putString(key, value);
+//        editor.commit();
+//	}
+	
+//	public void setLocale(String locale) {
+//		android.content.res.Configuration conf = context.getResources().getConfiguration();
+//        conf.locale = new Locale(locale);
+//        context.getResources().updateConfiguration(conf, context.getResources().getDisplayMetrics());
+//        addPreferences(MovieConstants.KEY_LOCALE, locale);
+//	}
+}

@@ -1,0 +1,184 @@
+package com.listmovie;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
+import com.listmovie.cinema.database.Cinema;
+import com.listmovie.cinema.database.CinemaProvider;
+import com.listmovie.cinema.googleplace.GooglePlace;
+import com.listmovie.cinema.googleplace.GooglePlaceDetails;
+import com.listmovie.cinema.googleplace.GooglePlaces;
+import com.listmovie.cinema.googleplace.GooglePlacesList;
+import com.listmovie.cinema.overlay.CinemaOverlayItem;
+import com.listmovie.cinema.overlay.CinemasItemizedOverlay;
+import com.listmovie.utils.FreeChairsGenerator;
+import com.listmovie.utils.GeoUpdateHandler;
+import com.listmovie.utils.ILocationDistance;
+import com.listmovie.utils.SharedPreferencesManager;
+
+public class GoogleMapActivity extends MapActivity {
+	private ProgressDialog progressDialog = null;
+	private SharedPreferencesManager sharedPreferencesManager;
+	private FreeChairsGenerator fcg = new FreeChairsGenerator();
+	
+	private SharedPreferencesManager getSharedPreferencesManager() {
+		if (sharedPreferencesManager == null) {
+			sharedPreferencesManager = new SharedPreferencesManager(this);
+		}
+		return sharedPreferencesManager;
+	}
+	
+	private void findNearest(final LocationManager locationManager, final MapView mapView) {
+		new AsyncTask<ILocationDistance, Integer, List<GooglePlaceDetails>> () {
+			  @Override
+	          protected void onPreExecute() {
+	              super.onPreExecute();
+	         	  progressDialog = new ProgressDialog(GoogleMapActivity.this);
+	         	  progressDialog.setMessage(getString(R.string.loading));
+	         	  progressDialog.show();
+	          }
+			  
+	    	  @Override
+	    	  protected List<GooglePlaceDetails> doInBackground(ILocationDistance... params) {
+	    		    
+	    		 ILocationDistance ld = params[0];
+	    	     GooglePlacesList list = null;
+	    		 final List<GooglePlaceDetails> detailedList = new ArrayList<GooglePlaceDetails>();
+				 try {
+				     list = GooglePlaces.search(ld.getLocation().getLatitude(),
+				    		 ld.getLocation().getLongitude(),
+				    		 ld.getDistance(), "establishment");
+	    			 for (GooglePlace place: list.results) {
+					     detailedList.add(GooglePlaces.getPlaceDetails(place.reference));
+					 }
+	    		 } catch (Exception e) {
+	    		     Log.e("Places list some bug:", e.getMessage());
+	    		 }
+	    			return detailedList;
+	    		}
+	    	  
+	    		protected void onPostExecute(List<GooglePlaceDetails> details_list) {
+	    			
+	    		    List<Overlay> mapOverlays = mapView.getOverlays();
+	    		    Drawable drawable = GoogleMapActivity.this.getResources().getDrawable(android.R.drawable.arrow_down_float);
+	    		    CinemasItemizedOverlay itemizedoverlay = new CinemasItemizedOverlay(drawable, GoogleMapActivity.this);
+	    		    if (details_list == null || details_list.isEmpty()) {
+	    		    	return;
+	    		    }
+	    		    
+	    		    try {
+	    		    	for (GooglePlaceDetails details : details_list) {
+	    		    		GooglePlace place = details.result;
+	    					ContentValues initialValues = new ContentValues();
+	    					initialValues.put(Cinema.COLUMN_NAME_ID_S, place.id);
+	    					initialValues.put(Cinema.COLUMN_NAME_FORMATTED_PHONE_NUMBER, place.formatted_phone_number);
+	    			        initialValues.put(Cinema.COLUMN_NAME_ICON, place.icon);
+	    			        initialValues.put(Cinema.COLUMN_NAME_NAME, place.name);
+	    			        initialValues.put(Cinema.COLUMN_NAME_WEBSITE, place.website);
+	    			        initialValues.put(Cinema.COLUMN_NAME_LATITUDE, place.geometry.location.lat);
+	    			        initialValues.put(Cinema.COLUMN_NAME_LONGTITUDE, place.geometry.location.lng);
+	    			        initialValues.put(Cinema.COLUMN_NAME_VICINITY, place.vicinity);
+	    			        initialValues.put(Cinema.COLUMN_NAME_SEATSSIZE, FreeChairsGenerator.COUNT_OF_SEATS);
+	    			       
+	    			        /* Returns a string containing a concise, human-readable description of the receiver: a comma-delimited list of the indexes of all set bits. */
+	    			        FreeChairsGenerator.Seats seats = fcg.getNewFreeChairs();
+	    			        initialValues.put(Cinema.COLUMN_NAME_SEATS, seats.getNumbers().toString());
+	    			        
+	    			        if ( place.opening_hours != null) {
+	    			        	initialValues.put(Cinema.COLUMN_NAME_OPENING_HOURS, place.opening_hours.toString());
+	    			        }
+	    			        
+	    			        getContentResolver().insert(CinemaProvider.CONTENT_URI, initialValues);
+
+	    			        int lat = (int) (1E6 * place.geometry.location.lat);
+	        		    	int lng = (int) (1E6 * place.geometry.location.lng);
+	        		    	GeoPoint point = new GeoPoint(lat, lng);
+	        		    	CinemaOverlayItem overlayitem = new CinemaOverlayItem(point, place.name, place.vicinity, place.id) ;
+	            	    	itemizedoverlay.addOverlay(overlayitem);
+	    				}
+	    		    	mapOverlays.add(itemizedoverlay);
+	    		    } catch (Exception ex) {
+	    		    	Log.e("Exception while try get google places details and add data to DataBase",
+	    		    			ex.getMessage());
+	    		    }
+	    		    
+	    		    progressDialog.dismiss(); 
+	    		};
+	    	}.execute(new ILocationDistance() {
+				
+				@Override
+				public Location getLocation() {
+				    String locationProvider = LocationManager.NETWORK_PROVIDER;
+					Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+					if (lastKnownLocation == null) {
+						lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+					}
+					if (lastKnownLocation == null) {
+					    lastKnownLocation = new Location(LocationManager.GPS_PROVIDER);
+					    lastKnownLocation.setLatitude(48.466601);
+					    lastKnownLocation.setLongitude(35.018155);
+					}
+					return lastKnownLocation;
+				}
+				
+				@Override
+				public int getDistance() {
+					return getSharedPreferencesManager().getDistance();
+				}
+			});
+	    	
+	    	
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.map);
+		final MapView mapView = (MapView) findViewById(R.id.mapview);
+
+	    MapController mapController = mapView.getController();
+	    mapController.setZoom(14); 
+	    
+	    Drawable drawable = this.getResources().getDrawable(android.R.drawable.arrow_up_float);
+	    CinemasItemizedOverlay itemizedoverlay = new CinemasItemizedOverlay(drawable, this);
+	    
+		mapView.setBuiltInZoomControls(true);
+		final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+	        0, new GeoUpdateHandler(mapController, mapView, itemizedoverlay));
+
+	    final MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mapView);
+	    mapView.getOverlays().add(myLocationOverlay);
+
+	    myLocationOverlay.runOnFirstFix(new Runnable() {
+	        public void run() {
+	            mapView.getController().animateTo(myLocationOverlay.getMyLocation());
+	            findNearest(locationManager,  mapView);
+	        }
+	    });
+	    findNearest(locationManager,  mapView);
+		
+	}
+	
+	@Override
+    protected boolean isRouteDisplayed() {
+        return false;
+    }
+    
+}
