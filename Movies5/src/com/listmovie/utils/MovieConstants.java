@@ -33,8 +33,9 @@ public class MovieConstants {
     
     public static final String KEY_VIDEO_SOURCE = "videoSource";
     
-    public static final int    LIMIT_PER_PAGE = 5;
     public static final int    MIN_LIMIT = 5;
+    public static final int    LIMIT_PER_PAGE = MIN_LIMIT;
+    
     public static final int    MAX_LIMIT = 20;
     
     public static final int    DEFAULT_DISTANCE = 100;
