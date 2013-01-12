@@ -1,0 +1,7 @@
+package com.listmovie.moviesforandroid;
+
+import net.sf.jtmdb.Movie ;
+
+public class MovieAndroid extends Movie {
+    
+}

@@ -1,0 +1,23 @@
+package com.listmovie.utils;
+
+import java.io.BufferedInputStream ;
+import java.io.IOException ;
+import java.io.InputStream ;
+import java.net.HttpURLConnection ;
+import java.net.URL ;
+import java.util.Map ;
+public class HttpManager {
+    
+    public static InputStream getResponseInputStream(String requestUrl, Map<String, Object> requestParams) throws IOException {
+        URL url = new URL(requestUrl);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        InputStream in;
+        try {
+            in = new BufferedInputStream(urlConnection.getInputStream());
+        } finally {
+          urlConnection.disconnect();
+        }
+        return in;
+        
+    }
+}

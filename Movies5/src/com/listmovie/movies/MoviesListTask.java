@@ -3,18 +3,18 @@ package com.listmovie.movies;
 import java.util.ArrayList ;
 import java.util.List ;
 
-import net.sf.jtmdb.BrowseOptions ;
-import net.sf.jtmdb.GeneralSettings ;
 import net.sf.jtmdb.Movie ;
 import android.annotation.SuppressLint ;
 import android.os.AsyncTask ;
 import android.util.Log ;
 
+import com.listmovie.moviesforandroid.BrowseOptionsAndroid ;
+import com.listmovie.moviesforandroid.MovieAndroidService ;
 import com.listmovie.utils.MovieCache ;
 import com.listmovie.utils.MovieConstants ;
 
 @SuppressLint({ "SimpleDateFormat", "UseSparseArrays" })
-public class MoviesListTask extends AsyncTask<String, String, List<Movie>> {
+public class MoviesListTask extends AsyncTask<String, Movie, List<Movie>> {
 
 	private static final String TAG = MoviesListTask.class.getSimpleName();
 
@@ -43,18 +43,18 @@ public class MoviesListTask extends AsyncTask<String, String, List<Movie>> {
 	protected List<Movie> searchMovies(final String search_string) {
         List<Movie> movies = new ArrayList<Movie>();
         try {
-            movies = Movie.search(search_string);
+            movies = MovieAndroidService.search(search_string);
         } catch( Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return movies;
     }
 
-	protected List<net.sf.jtmdb.Movie> getPopularMovies(final Integer page) {
+	protected List<Movie> getPopularMovies(final Integer page) {
 		
 		if (!limitOfMoviesExtended()) {
 			try {
-				return net.sf.jtmdb.Movie.browse(new BrowseOptions(){
+				return MovieAndroidService.browse(new BrowseOptionsAndroid(){
 				
 					private static final long serialVersionUID = -4620142785033329241L;
 	
@@ -93,7 +93,7 @@ public class MoviesListTask extends AsyncTask<String, String, List<Movie>> {
 	@Override
 	protected List<Movie> doInBackground(String ... params) {
 		
-		List<net.sf.jtmdb.Movie> moviesOld;
+		List<Movie> moviesOld;
 		if (search) {
 		    moviesOld = searchMovies(params[0]);
 	    } else {
@@ -102,13 +102,13 @@ public class MoviesListTask extends AsyncTask<String, String, List<Movie>> {
 		for (Movie m: moviesOld) {
             try {
                 if (!search) {
-                    m = net.sf.jtmdb.Movie.getInfo(m.getID());
+                    m = MovieAndroidService.getInfo(m.getID());
                 }
                 movies.add(m);
                 getMovieCache().addMoviePictures(m);
-                publishProgress(m.getName());
+                publishProgress(m);
             } catch (Exception e) {
-                publishProgress(m.getName() + " is failed...");
+                Log.e("Getting Movies exception", e.toString());
             } 
         }
 		return movies;

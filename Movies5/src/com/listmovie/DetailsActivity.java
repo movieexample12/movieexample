@@ -8,6 +8,7 @@ import android.net.Uri ;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem ;
 import android.view.View ;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -96,5 +97,21 @@ public class DetailsActivity extends Activity {
 	        startActivity(i);
 	    }
 	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (R.id.preferences_menu == item.getItemId()) {
+            this.startActivity(new Intent(this, PreferencesActivity.class));
+            return true;    
+        } 
+        else if (R.id.theaters_menu == item.getItemId()) {
+            Intent activity = new Intent(this, GoogleMapActivity.class);
+            this.startActivity(activity);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }

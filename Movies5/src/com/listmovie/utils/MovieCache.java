@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.jtmdb.Movie;
+import net.sf.jtmdb.MoviePoster ;
+import net.sf.jtmdb.MoviePoster.Size ;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,9 +94,8 @@ public class MovieCache {
 	    return preferences.useExternalStorage();	
 	}
 	
-	private void createPicture(String saveTo, JSONObject image) {
+	private void createPicture(String saveTo, URL newurl) {
 		try {
-		    URL newurl = new URL(String.valueOf(image.getString(URL_KEY)));
 		    if (useExternalDevice(context)) {
 		    	createExternalStoragePrivatePicture(newurl.openConnection().getInputStream(), saveTo);
 		    } else {
@@ -128,27 +129,9 @@ public class MovieCache {
 	}
 	
 	public void addMoviePictures(Movie movie) {
-        try {
-        	JSONArray posters = null;
-        	JSONObject image = null;
-        	JSONObject moviesJSON = new JSONObject(movie.getJsonOrigin());
-			if (moviesJSON.has(IMAGES_LIST_KEY)) {
-				if (moviesJSON.get(IMAGES_LIST_KEY) instanceof JSONArray ) {
-					posters = moviesJSON.getJSONArray(IMAGES_LIST_KEY);
-					if (posters.length() > 0) {
-						for (int j=0; j < posters.length(); ++j) {
-							image = posters.getJSONObject(j).getJSONObject(IMAGE_KEY);
-							if (THUMB_KEY.equals(image.get(SIZE_KEY))) {
-								createPicture( getShortName(THUMB_KEY, movie.getID()), image);
-							} else if (POSTER_IMAGE_KEY.equals(image.get(SIZE_KEY))) {
-								createPicture(getShortName(POSTER_IMAGE_KEY, movie.getID()), image);
-							}
-						}
-					}
-				}
-			}
-		} catch (JSONException e) {
-			Log.e(TAG, "Error while parsing json");
+		for (MoviePoster poster: movie.getImages().posters) {
+			createPicture( getShortName(THUMB_KEY, movie.getID()), poster.getImage(Size.THUMB));
+			createPicture(getShortName(POSTER_IMAGE_KEY, movie.getID()), poster.getImage(Size.COVER));
 		}
 	}
 	

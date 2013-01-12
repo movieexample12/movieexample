@@ -1,0 +1,21 @@
+package com.listmovie.moviesforandroid;
+
+import net.sf.jtmdb.BrowseOptions ;
+
+public class BrowseOptionsAndroid {
+    
+    private BrowseOptionsA browseOptions;
+    public BrowseOptionsAndroid(BrowseOptions bo) {
+        this.browseOptions = (BrowseOptionsA)bo;
+    }
+    
+    public String getBuildedQuery() {
+        return browseOptions.buildQueryA();
+    }
+    
+    private final class BrowseOptionsA extends BrowseOptions {
+        String buildQueryA() {
+            return buildQuery();
+        }
+    }
+}

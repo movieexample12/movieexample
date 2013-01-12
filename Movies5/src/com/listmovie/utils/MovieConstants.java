@@ -32,7 +32,8 @@ public class MovieConstants {
     public static final String KEY_EXTERNAL_STORAGE = "external_storage";
     
     public static final String KEY_VIDEO_SOURCE = "videoSource";
-    
+   
+    public static final int    DEFAULT_LIMIT = 8;
     public static final int    MIN_LIMIT = 5;
     public static final int    LIMIT_PER_PAGE = MIN_LIMIT;
     

@@ -17,7 +17,7 @@ import com.google.api.client.http.json.JsonHttpParser;
 import com.google.api.client.json.jackson.JacksonFactory;
 
 public class GooglePlacesManager {
-	/** Global instance of the HTTP transport. */
+    /** Global instance of the HTTP transport. */
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
  
     // Google API Key

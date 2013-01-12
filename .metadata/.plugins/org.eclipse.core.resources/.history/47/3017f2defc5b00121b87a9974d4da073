@@ -1,0 +1,14 @@
+package com.listmovie.moviesforandroid;
+
+import net.sf.jtmdb.BrowseOptions ;
+
+public class BrowseOptionsAndroid {
+    
+    public static String getBrowseOptions(BrowseOptions browse) {
+        
+    }
+    
+    private final class BrowseOptionsA extends BrowseOptions {
+        
+    }
+}

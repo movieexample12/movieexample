@@ -1,0 +1,84 @@
+package com.listmovie.movies;
+
+import net.sf.jtmdb.Movie;
+import android.app.Activity;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.listmovie.AbstractListMovieActivity;
+import com.listmovie.R;
+import com.listmovie.utils.MovieCache;
+import com.listmovie.utils.MovieConstants;
+
+public class LazyAdapter extends BaseAdapter {
+	
+	private SparseArray<Movie> movies = new SparseArray<Movie>();
+	
+	private Activity activity;
+    private LayoutInflater inflater;
+    public LazyAdapter(Activity a) {
+    	activity = a;
+    }
+    
+    public void setMovies(SparseArray<Movie> movies) {
+    	this.movies = movies;
+    }
+    
+    @Override
+	public int getCount() {
+		return movies.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return movies.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+	
+	static class ViewHolder {
+		  TextView title;
+		  TextView duration;
+		  ImageView image;
+		  int position;
+    }
+	
+	private MovieCache getCache() {
+		return ((AbstractListMovieActivity)activity).getMovieCache();
+	}
+
+	@Override
+	public View getView(final int position, View vi, final ViewGroup parent) {
+		ViewHolder holder = new ViewHolder();
+		if (vi == null) {
+			if (inflater == null) {
+				inflater = activity.getLayoutInflater();
+			}
+			vi = inflater.inflate(R.layout.list_item, parent, false);
+			holder.image = (ImageView) vi.findViewById(R.id.image);
+			holder.title = (TextView) vi.findViewById(R.id.title);
+			holder.duration = (TextView) vi.findViewById(R.id.duration);
+			vi.setTag(holder);
+        } else {
+        	holder = (ViewHolder) vi.getTag(); 
+        }
+	 
+        Movie movie = (Movie)getItem(position);
+        holder.title.setText(String.valueOf(movie.getName()));
+        if ( movie.getReleasedDate()!=null) {
+        	holder.duration.setText(MovieConstants.SDF.format(movie.getReleasedDate()));
+        }
+        holder.image.setImageBitmap(getCache().getThumb(position));
+        return vi;
+	}
+	
+	
+}

@@ -26,12 +26,12 @@ public class SharedPreferencesManager implements IPreferences {
 	@Override
 	public int getLimitOfMovies() {
 		return Integer.valueOf(settings.getString(MovieConstants.KEY_LIMIT_OF_MOVIES, 
-		        String.valueOf(MovieConstants.MIN_LIMIT))).intValue();
+		        String.valueOf(MovieConstants.DEFAULT_LIMIT))).intValue();
 	}
 
 	@Override
 	public String getLanguage() {
-		return settings.getString(MovieConstants.KEY_PREF_LANGUAGE, null);
+		return settings.getString(MovieConstants.KEY_PREF_LANGUAGE, "en");
 	}
 
 	@Override

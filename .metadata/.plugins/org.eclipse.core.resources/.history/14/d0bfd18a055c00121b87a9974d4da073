@@ -1,0 +1,195 @@
+package com.listmovie.moviesforandroid;
+
+import java.io.BufferedInputStream ;
+import java.io.IOException ;
+import java.io.InputStream ;
+import java.io.UnsupportedEncodingException ;
+import java.net.URL ;
+import java.net.URLEncoder ;
+import java.util.HashMap ;
+import java.util.LinkedList ;
+import java.util.List ;
+
+import org.json.JSONArray ;
+import org.json.JSONException ;
+
+import com.google.api.client.http.GenericUrl ;
+import com.google.api.client.http.HttpRequest ;
+import com.google.api.client.http.HttpRequestFactory ;
+import com.google.api.client.http.HttpResponse ;
+import com.google.api.client.http.HttpTransport ;
+import com.google.api.client.http.javanet.NetHttpTransport ;
+import com.listmovie.cinema.googleplace.GooglePlacesList ;
+import com.listmovie.utils.HttpManager ;
+
+import net.sf.jtmdb.BrowseOptions ;
+import net.sf.jtmdb.GeneralSettings ;
+import net.sf.jtmdb.Log ;
+import net.sf.jtmdb.Movie ;
+import net.sf.jtmdb.GeneralSettings.Utilities ;
+import net.sf.jtmdb.Log.Verbosity ;
+
+public class MovieAndroid {
+
+    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    
+    protected static final String BASE_URL = "http://api.themoviedb.org/2.1/";
+   
+    protected static final String MOVIE_SEARCH_URL = "Movie.search/";
+   
+    protected static final String MOVIE_GETINFO_URL = "Movie.getInfo/";
+    
+    protected static final String MOVIE_BROWSE_URL = "Movie.browse/";
+    
+    protected static final String API_MODE_URL = "json";
+    
+    public static String json(HttpResponse response) throws IOException {
+      BufferedInputStream bis = new BufferedInputStream(response.getContent());
+      StringBuilder b = new StringBuilder();
+      byte[]arr = new byte[bis.available()];
+      bis.read(arr);
+      b.append(arr);
+      return b.toString();
+    }
+    
+    public static Movie getInfo(int ID) throws IOException, JSONException {
+        Log.log("Getting info for Movie with id " + ID, Verbosity.NORMAL);
+        if (GeneralSettings.getApiKey() != null
+                && !GeneralSettings.getApiKey().equals("")) {
+            try {
+                URL call = new URL(BASE_URL
+                        + MOVIE_GETINFO_URL
+                        + GeneralSettings.getAPILocaleFormatted() + "/"
+                        + API_MODE_URL + "/"
+                        + GeneralSettings.getApiKey() + "/" + ID);
+                
+                HttpResponse response = HttpManager.getResponse(call.toString(), new HashMap<String, Object>());
+                InputStream content = response.getContent();
+                response.getContentEncoding();
+                String jsonString = json(response);
+                
+                if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+                        && !jsonString.equals("[\"Nothing found.\"]")) {
+                    JSONArray jsonArray = new JSONArray(jsonString.toString());
+                    return new Movie(jsonArray);
+                } else {
+                    Log.log("Getting info for Movie with id " + ID
+                            + " returned no results", Verbosity.NORMAL);
+                }
+            } catch (IOException e) {
+                Log.log(e, Verbosity.ERROR);
+                throw e;
+            } catch (JSONException e) {
+                Log.log(e, Verbosity.ERROR);
+                throw e;
+            }
+        } else {
+            Log.log("Error with the API key", Verbosity.ERROR);
+        }
+        return null;
+    }
+
+    public static List<Movie> browse(BrowseOptionsAndroid options) throws IOException,
+    JSONException {
+        Log.log("Browsing for Movies", Verbosity.NORMAL);
+        if (GeneralSettings.getApiKey() != null
+                && !GeneralSettings.getApiKey().equals("")) {
+            try {
+                
+                URL call = new URL(BASE_URL
+                        + MOVIE_BROWSE_URL
+                        + GeneralSettings.getAPILocaleFormatted() + "/"
+                        + API_MODE_URL + "/"
+                        + GeneralSettings.getApiKey() + "?"
+                        + options.getBuiltQuery());
+                
+                HttpResponse response = HttpManager.getResponse(call.toString(), new HashMap<String, Object>());
+                
+                String jsonString = response.parseAsString();
+               
+                List<Movie> results = new LinkedList<Movie>();
+                if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+                        && !jsonString.equals("[\"Nothing found.\"]")) {
+                    JSONArray jsonArray = new JSONArray(jsonString.toString());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        results.add(new Movie(jsonArray.getJSONObject(i)));
+                    }
+                } else {
+                    Log.log("Browsing for Movies returned no results",
+                            Verbosity.NORMAL);
+                }
+                return results;
+            } catch (IOException e) {
+                Log.log(e, Verbosity.ERROR);
+                throw e;
+            } catch (JSONException e) {
+                Log.log(e, Verbosity.ERROR);
+                throw e;
+            }
+        } else {
+            Log.log("Error with the API key", Verbosity.ERROR);
+        }
+        return null;
+    }
+
+    public static List<Movie> search(String name) throws IOException,
+    JSONException {
+        Log.log("Performing a Movie search for \"" + name + "\"",
+                Verbosity.NORMAL);
+        try {
+            name = URLEncoder.encode(name, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            name = name.replaceAll(" ", "%20");
+        }
+        if (GeneralSettings.getApiKey() != null
+                && !GeneralSettings.getApiKey().equals("")) {
+            if (name != null && !name.equals("")) {
+                try {
+                    URL call = new URL(BASE_URL
+                            + MOVIE_SEARCH_URL
+                            + GeneralSettings.getAPILocaleFormatted() + "/"
+                            + API_MODE_URL + "/"
+                            + GeneralSettings.getApiKey() + "/" + name);
+                    
+                    HttpResponse response = HttpManager.getResponse(call.toString(), new HashMap<String, Object>());
+                    
+                    String jsonString = response.parseAsString();
+                    
+                    List<Movie> results = new LinkedList<Movie>();
+                    if ((jsonString.startsWith("[") || jsonString
+                            .startsWith("{"))
+                            && !jsonString.equals("[\"Nothing found.\"]")) {
+                        JSONArray jsonArray = new JSONArray(jsonString
+                                .toString());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            results.add(new Movie(jsonArray.getJSONObject(i)));
+                        }
+                    } else {
+                        Log.log("Search for \"" + name
+                                + "\" returned no results", Verbosity.NORMAL);
+                    }
+                    return results;
+                } catch (IOException e) {
+                    Log.log(e, Verbosity.ERROR);
+                    throw e;
+                } catch (JSONException e) {
+                    Log.log(e, Verbosity.ERROR);
+                    throw e;
+                }
+            } else {
+                Log.log("Cannot search for a null or empty string",
+                        Verbosity.ERROR);
+            }
+        } else {
+            Log.log("Error with the API key", Verbosity.ERROR);
+        }
+        return null;
+        }
+
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L ;
+    
+}

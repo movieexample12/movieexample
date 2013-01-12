@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workingSetManager>
 <workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1355154752858_1" label="appl1" name="appl1">
-<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/listview-load-more" type="4"/>
+<item elementID="=listview-load-more" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/Beam" type="4"/>
 </workingSet>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1355152149360_0" label="Window Working Set" name="Aggregate for window 1355152149358"/>
@@ -60,5 +60,6 @@
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1357817856618_54" label="Window Working Set" name="Aggregate for window 1357817856617"/>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1357833962103_55" label="Window Working Set" name="Aggregate for window 1357833962103"/>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1357889548472_56" label="Window Working Set" name="Aggregate for window 1357889548472"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1357974917768_57" label="Window Working Set" name="Aggregate for window 1357974917768"/>
 <mruList name="appl1"/>
 </workingSetManager>

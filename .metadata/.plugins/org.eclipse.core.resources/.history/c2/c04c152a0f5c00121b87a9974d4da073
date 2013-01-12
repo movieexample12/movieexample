@@ -1,0 +1,131 @@
+package com.listmovie.movies;
+
+import java.util.ArrayList ;
+import java.util.List ;
+
+import net.sf.jtmdb.BrowseOptions ;
+import net.sf.jtmdb.GeneralSettings ;
+import net.sf.jtmdb.Movie ;
+import android.annotation.SuppressLint ;
+import android.os.AsyncTask ;
+import android.util.Log ;
+
+import com.listmovie.moviesforandroid.BrowseOptionsAndroid ;
+import com.listmovie.moviesforandroid.MovieAndroidService ;
+import com.listmovie.utils.MovieCache ;
+import com.listmovie.utils.MovieConstants ;
+
+@SuppressLint({ "SimpleDateFormat", "UseSparseArrays" })
+public class MoviesListTask extends AsyncTask<String, String, List<Movie>> {
+
+	private static final String TAG = MoviesListTask.class.getSimpleName();
+
+	private List<Movie> movies = new ArrayList<Movie>();
+	
+	private int moviesLimit;
+	private int alreadyFetched;
+	private MovieCache cache;
+	private boolean search;
+	public Boolean taskEnded = Boolean.FALSE;
+	
+	public boolean limitOfMoviesExtended() {
+		return getCountOfAllMovies() >= moviesLimit;
+	}
+	
+	public int getCountOfAllMovies() {
+		return movies.size() + alreadyFetched;
+	}
+	public int getCountPerPage() {
+	    if (MovieConstants.LIMIT_PER_PAGE > moviesLimit - getCountOfAllMovies()) {
+	        return  moviesLimit - getCountOfAllMovies();
+	    } 
+	    return MovieConstants.LIMIT_PER_PAGE;
+	}
+	/* need for Loading... string */
+	protected List<MovieAndroidService> searchMovies(final String search_string) {
+        List<MovieAndroidService> movies = new ArrayList<MovieAndroidService>();
+        try {
+            movies = MovieAndroidService.search(search_string);
+        } catch( Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return movies;
+    }
+
+	protected List<MovieAndroidService> getPopularMovies(final Integer page) {
+		
+		if (!limitOfMoviesExtended()) {
+			try {
+				return MovieAndroid.browse(new BrowseOptionsAndroid(){
+				
+					private static final long serialVersionUID = -4620142785033329241L;
+	
+					@Override
+					public ORDER_BY getOrderBy() {
+						return ORDER_BY.RATING;
+					}
+					@Override
+					public ORDER getOrder() {
+						return ORDER.DESC;
+					}
+					
+					@Override
+					public Integer getMinVotes() {
+						return 5;
+					}
+					
+					@Override
+					public Integer getPerPage() {
+						return getCountPerPage();
+					}
+					
+					@Override
+					public Integer getPage() {
+						return page;
+					}
+					
+				});
+			} catch( Exception e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	protected List<Movie> doInBackground(String ... params) {
+		
+		List<Movie> moviesOld;
+		if (search) {
+		    moviesOld = searchMovies(params[0]);
+	    } else {
+		    moviesOld = getPopularMovies(Integer.valueOf(params[0]));
+	    }
+		for (Movie m: moviesOld) {
+            try {
+                if (!search) {
+                    m = MovieAndroidService.getInfo(m.getID());
+                }
+                movies.add(m);
+                getMovieCache().addMoviePictures(m);
+                publishProgress(m.getName());
+            } catch (Exception e) {
+                publishProgress(m.getName() + " is failed...");
+            } 
+        }
+		return movies;
+	}
+	
+	public MoviesListTask(int moviesLimit, int alreadyFetchedMovies, MovieCache cache, boolean search) {
+		super();
+		this.alreadyFetched = alreadyFetchedMovies;
+		this.moviesLimit = moviesLimit;
+		this.cache = cache;
+		this.search = search;
+	}
+	
+	public MovieCache getMovieCache() {
+	    return cache;
+	}
+	
+}

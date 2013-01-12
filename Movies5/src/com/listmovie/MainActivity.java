@@ -2,6 +2,7 @@ package com.listmovie;
 
 
 import java.text.SimpleDateFormat ;
+import java.util.Arrays ;
 import java.util.Date ;
 import java.util.List ;
 
@@ -33,7 +34,6 @@ public class MainActivity extends ListActivity implements OnScrollListener {
 	protected Adapter adapter = null;
 	protected MovieCache cache;
 	protected ListView list = null;
-	private ProgressDialog progressDialog = null;
     private int pageNum = 1;
     private MoviesListTask task;
 	protected View footer;
@@ -98,50 +98,39 @@ public class MainActivity extends ListActivity implements OnScrollListener {
 			task = new MoviesListTask(getMoviesLimit(), countOfMovies(), getMovieCache(), searchMode) {
              	protected void onPostExecute(List<net.sf.jtmdb.Movie> result) {
              		super.onPostExecute(result);
-             		progressDialog.dismiss();
-             		if (!searchMode) {
-             		   list.setAdapter(adapter);
-             		}
-             		adapter.addMovies(result);
-            		adapter.notifyDataSetChanged();
+            		
             		int index = list.getFirstVisiblePosition();
             		int top = (list.getChildAt(0) == null) ? 0 : list.getChildAt(0).getTop();
             		list.setSelectionFromTop(index, top);
             		limitExtended = limitOfMoviesExtended();
             		
-            		if (!searchMode) {
-            		    if (!limitExtended && footer == null) {
-                            footer = getLayoutInflater().inflate(R.layout.footer, null);
-                            list.addFooterView(footer);
-                        } else {
-                            list.removeFooterView(footer);
-                        }
-            		}
+            		if (searchMode || limitExtended) {
+            		    list.removeFooterView(footer);
+                    }
              		taskEnded = Boolean.TRUE;
              		pageNum += 1;
              		
-             		//progressDialog = null;
              	};
              	
              	@Override
-             	protected void onProgressUpdate(String... values) {
+             	protected void onProgressUpdate(Movie... values) {
              		super.onProgressUpdate(values);
-             		progressDialog.setMessage(getString(R.string.getting_movie_) + values[0]);
+             		adapter.addMovies(Arrays.asList(values));
+             		adapter.notifyDataSetChanged();
              	}
              	
              	@Override
              	protected void onPreExecute() {
              		super.onPreExecute();
-             		if (searchMode) {
+             		
+             		if (searchMode || adapter.getCount() == 0) {
+                        footer = getLayoutInflater().inflate(R.layout.footer, null);
+                        list.addFooterView(footer);
              		    list.setAdapter(adapter);
                         adapter.clear();
                         adapter.notifyDataSetChanged();
-             		}
-             		if (adapter == null || adapter.getCount() == 0) {
-             		    progressDialog = new ProgressDialog(MainActivity.this);
-                        progressDialog.setMessage(getString(R.string.loading));
-                        progressDialog.show();
-             		}
+             		} 
+
              	}
             };
             
@@ -242,11 +231,7 @@ public class MainActivity extends ListActivity implements OnScrollListener {
 	}
 	
 	public int countOfMovies () {
-		if (adapter == null) {
-			return 0;
-		} else {
-			return adapter.getCount();
-		}
+		return (adapter == null) ? 0 : adapter.getCount();
 	}
 
 	@Override

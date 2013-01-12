@@ -1,0 +1,82 @@
+package com.listmovie.cinema.googleplace;
+
+import java.util.HashMap ;
+import java.util.Map ;
+
+import org.apache.http.client.HttpResponseException;
+
+import android.util.Log;
+
+ 
+import com.google.api.client.googleapis.GoogleHeaders;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.http.json.JsonHttpParser;
+import com.google.api.client.json.jackson.JacksonFactory;
+import com.listmovie.utils.HttpManager ;
+
+public class GooglePlacesManager {
+	
+    // Google API Key
+    private static final String API_KEY = "AIzaSyDUmmvpJHfvthXK_g-jk3Ef2FJbkosvIUc";
+ 
+    // Google Places serach url's
+    private static final String PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/search/json?";
+    private static final String PLACES_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json?";
+ 
+    /**
+     * Searching places
+     * @param latitude - latitude of place
+     * @params longitude - longitude of place
+     * @param radius - radius of searchable area
+     * @param types - type of place to search
+     * @return list of places
+     * */
+    public static GooglePlacesList search(double latitude, double longitude, double radius, String type)
+            throws Exception {
+ 
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("key", API_KEY);
+        paramsMap.put("location", latitude + "," + longitude);
+        paramsMap.put("radius", radius); // in meters
+        paramsMap.put("sensor", "false");
+        if(type != null)
+            paramsMap.put("types", type);
+        
+        HttpResponse resp = HttpManager.getResponse(PLACES_SEARCH_URL, paramsMap);
+        GooglePlacesList list = resp.parseAs(GooglePlacesList.class);
+            // Check log cat for places response status
+        Log.d("Places Status", String.valueOf(list.status));
+            return list;
+    }
+ 
+    /**
+     * Searching single place full details
+     * @param refrence - reference id of place
+     *                 - which you will get in search api request
+     * */
+    public static GooglePlaceDetails getPlaceDetails(String reference) throws Exception {
+        try {
+        
+            Map<String, Object> paramsMap = new HashMap<String, Object>();
+            paramsMap.put("key", API_KEY);
+            paramsMap.put("reference", reference);
+            paramsMap.put("sensor", "false");
+            
+            HttpResponse resp = HttpManager.getResponse(PLACES_DETAILS_URL, paramsMap);
+            GooglePlaceDetails place = resp.parseAs(GooglePlaceDetails.class);
+            return place;
+ 
+        } catch (HttpResponseException e) {
+            Log.e("Error in Perform Details", e.getMessage());
+            throw e;
+        }
+    }
+ 
+   
+}

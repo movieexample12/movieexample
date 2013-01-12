@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.lang.UnsupportedOperationException"/>
-<fullyQualifiedTypeName name="android.widget.TextView"/>
-<fullyQualifiedTypeName name="com.listmovie.R"/>
-<fullyQualifiedTypeName name="android.app.Fragment"/>
-<fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="com.listmovie.CinemaTabsBar.SavedPlace"/>
-<fullyQualifiedTypeName name="android.widget.Adapter"/>
-<fullyQualifiedTypeName name="com.listmovie.utils.Adapter"/>
-<fullyQualifiedTypeName name="com.listmovie.utils.AbstractTask"/>
-<fullyQualifiedTypeName name="com.listmovie.movies.MoviesSearchTask"/>
-<fullyQualifiedTypeName name="android.app.ProgressDialog"/>
-<fullyQualifiedTypeName name="android.preference.PreferenceActivity"/>
-<fullyQualifiedTypeName name="android.preference.PreferenceFragment"/>
-<fullyQualifiedTypeName name="android.content.DialogInterface.OnClickListener"/>
-<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
-<fullyQualifiedTypeName name="android.view.View.OnTouchListener"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="android.view.SurfaceView"/>
 <fullyQualifiedTypeName name="com.listmovie.CinemaTabsBar.DrawableView.Chair"/>
 <fullyQualifiedTypeName name="net.sf.jtmdb.CastInfo"/>
@@ -39,9 +22,6 @@
 <fullyQualifiedTypeName name="android.location.LocationManager"/>
 <fullyQualifiedTypeName name="java.util.Locale"/>
 <fullyQualifiedTypeName name="com.listmovie.utils.IPreferences"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
-<fullyQualifiedTypeName name="java.util.HashMap"/>
-<fullyQualifiedTypeName name="com.listmovie.utils.MovieCache"/>
 <fullyQualifiedTypeName name="android.location.Location"/>
 <fullyQualifiedTypeName name="com.listmovie.CinemaTabsBar"/>
 <fullyQualifiedTypeName name="com.listmovie.utils.FreeChairsGenerator"/>
@@ -56,8 +36,28 @@
 <fullyQualifiedTypeName name="android.text.InputType"/>
 <fullyQualifiedTypeName name="android.preference.Preference.OnPreferenceChangeListener"/>
 <fullyQualifiedTypeName name="java.lang.Exception"/>
-<fullyQualifiedTypeName name="com.listmovie.utils.MovieConstants"/>
 <fullyQualifiedTypeName name="java.lang.IllegalStateException"/>
 <fullyQualifiedTypeName name="android.os.AsyncTask"/>
 <fullyQualifiedTypeName name="android.content.SharedPreferences"/>
+<fullyQualifiedTypeName name="android.preference.PreferenceManager"/>
+<fullyQualifiedTypeName name="com.listmovie.utils.MovieConstants"/>
+<fullyQualifiedTypeName name="com.listmovie.utils.MovieCache"/>
+<fullyQualifiedTypeName name="com.listmovie.utils.HttpManager"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="com.listmovie.moviesforandroid.BrowseOptionsAndroid"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="com.google.api.client.http.json.JsonHttpRequest"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.BufferedInputStream"/>
+<fullyQualifiedTypeName name="java.lang.StringBuilder"/>
+<fullyQualifiedTypeName name="java.util.zip.GZIPInputStream"/>
+<fullyQualifiedTypeName name="java.io.Reader"/>
+<fullyQualifiedTypeName name="java.io.StringWriter"/>
+<fullyQualifiedTypeName name="java.io.InputStreamReader"/>
+<fullyQualifiedTypeName name="com.listmovie.moviesforandroid.MovieAndroid"/>
+<fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.listmovie.movies.MovieAndroid"/>
+<fullyQualifiedTypeName name="com.listmovie.movies.MoviesList"/>
+<fullyQualifiedTypeName name="com.listmovie.moviesforandroid.MovieAndroidService"/>
 </qualifiedTypeNameHistroy>
